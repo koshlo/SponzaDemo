@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Framework3\BaseApp.cpp" />
+    <ClCompile Include="..\Framework3\Config.cpp" />
+    <ClCompile Include="..\Framework3\CPU.cpp" />
+    <ClCompile Include="..\Framework3\Direct3D11\D3D11App.cpp" />
+    <ClCompile Include="..\Framework3\Direct3D11\Direct3D11Renderer.cpp" />
+    <ClCompile Include="..\Framework3\GUI\Button.cpp" />
+    <ClCompile Include="..\Framework3\GUI\CheckBox.cpp" />
+    <ClCompile Include="..\Framework3\GUI\Dialog.cpp" />
+    <ClCompile Include="..\Framework3\GUI\DropDownList.cpp" />
+    <ClCompile Include="..\Framework3\GUI\Label.cpp" />
+    <ClCompile Include="..\Framework3\GUI\Slider.cpp" />
+    <ClCompile Include="..\Framework3\GUI\Widget.cpp" />
+    <ClCompile Include="..\Framework3\Imaging\Image.cpp" />
+    <ClCompile Include="..\Framework3\Math\Vector.cpp" />
+    <ClCompile Include="..\Framework3\Platform.cpp" />
+    <ClCompile Include="..\Framework3\Renderer.cpp" />
+    <ClCompile Include="..\Framework3\Util\BSP.cpp" />
+    <ClCompile Include="..\Framework3\Util\File.cpp" />
+    <ClCompile Include="..\Framework3\Util\Material.cpp" />
+    <ClCompile Include="..\Framework3\Util\Model.cpp" />
+    <ClCompile Include="..\Framework3\Util\ObjMaterialLib.cpp" />
+    <ClCompile Include="..\Framework3\Util\ParsingHelpers.cpp" />
+    <ClCompile Include="..\Framework3\Util\ResourceLoader.cpp" />
+    <ClCompile Include="..\Framework3\Util\String.cpp" />
+    <ClCompile Include="..\Framework3\Util\Tokenizer.cpp" />
+    <ClCompile Include="..\Framework3\Windows\WindowsBase.cpp" />
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="ShaderParamProvider.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Framework3\BaseApp.h" />
+    <ClInclude Include="..\Framework3\Config.h" />
+    <ClInclude Include="..\Framework3\CPU.h" />
+    <ClInclude Include="..\Framework3\Direct3D11\D3D11App.h" />
+    <ClInclude Include="..\Framework3\Direct3D11\Direct3D11Renderer.h" />
+    <ClInclude Include="..\Framework3\GUI\Button.h" />
+    <ClInclude Include="..\Framework3\GUI\CheckBox.h" />
+    <ClInclude Include="..\Framework3\GUI\Dialog.h" />
+    <ClInclude Include="..\Framework3\GUI\DropDownList.h" />
+    <ClInclude Include="..\Framework3\GUI\Label.h" />
+    <ClInclude Include="..\Framework3\GUI\Slider.h" />
+    <ClInclude Include="..\Framework3\GUI\Widget.h" />
+    <ClInclude Include="..\Framework3\Imaging\Image.h" />
+    <ClInclude Include="..\Framework3\Math\Vector.h" />
+    <ClInclude Include="..\Framework3\Platform.h" />
+    <ClInclude Include="..\Framework3\Renderer.h" />
+    <ClInclude Include="..\Framework3\Util\ArrayMap.h" />
+    <ClInclude Include="..\Framework3\Util\BSP.h" />
+    <ClInclude Include="..\Framework3\Util\File.h" />
+    <ClInclude Include="..\Framework3\Util\Material.h" />
+    <ClInclude Include="..\Framework3\Util\Model.h" />
+    <ClInclude Include="..\Framework3\Util\ObjMaterialLib.h" />
+    <ClInclude Include="..\Framework3\Util\Optional.h" />
+    <ClInclude Include="..\Framework3\Util\ParsingHelpers.h" />
+    <ClInclude Include="..\Framework3\Util\Resource.h" />
+    <ClInclude Include="..\Framework3\Util\ResourceLoader.h" />
+    <ClInclude Include="..\Framework3\Util\String.h" />
+    <ClInclude Include="..\Framework3\Util\Tokenizer.h" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="ShaderParamProvider.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Clustered.shd" />
+    <None Include="DeferredLighting.shd" />
+    <None Include="ForwardGeometry.shd" />
+    <None Include="RenderDepthMoments.shd" />
+    <None Include="ZOnly.shd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Framework3\Windows\Resources.rc" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{414E9ECC-66EC-4205-9144-06CC2AA7D243}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GPUTextureCompression3</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>VSM</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>libc;msvcrt</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MinSpace</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NO_JPEG;NO_PNG;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <IgnoreSpecificDefaultLibraries>libc</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

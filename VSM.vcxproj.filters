@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\Framework3\BaseApp.cpp" />
+    <ClCompile Include="..\Framework3\Config.cpp" />
+    <ClCompile Include="..\Framework3\CPU.cpp" />
+    <ClCompile Include="..\Framework3\Direct3D11\D3D11App.cpp" />
+    <ClCompile Include="..\Framework3\Direct3D11\Direct3D11Renderer.cpp" />
+    <ClCompile Include="..\Framework3\GUI\Button.cpp" />
+    <ClCompile Include="..\Framework3\GUI\CheckBox.cpp" />
+    <ClCompile Include="..\Framework3\GUI\Dialog.cpp" />
+    <ClCompile Include="..\Framework3\GUI\DropDownList.cpp" />
+    <ClCompile Include="..\Framework3\GUI\Label.cpp" />
+    <ClCompile Include="..\Framework3\GUI\Slider.cpp" />
+    <ClCompile Include="..\Framework3\GUI\Widget.cpp" />
+    <ClCompile Include="..\Framework3\Imaging\Image.cpp" />
+    <ClCompile Include="..\Framework3\Math\Vector.cpp" />
+    <ClCompile Include="..\Framework3\Platform.cpp" />
+    <ClCompile Include="..\Framework3\Renderer.cpp" />
+    <ClCompile Include="..\Framework3\Util\BSP.cpp" />
+    <ClCompile Include="..\Framework3\Util\Model.cpp" />
+    <ClCompile Include="..\Framework3\Util\ObjMaterialLib.cpp" />
+    <ClCompile Include="..\Framework3\Util\ParsingHelpers.cpp" />
+    <ClCompile Include="..\Framework3\Util\String.cpp" />
+    <ClCompile Include="..\Framework3\Util\Tokenizer.cpp" />
+    <ClCompile Include="..\Framework3\Windows\WindowsBase.cpp" />
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="ShaderParamProvider.cpp" />
+    <ClCompile Include="..\Framework3\Util\File.cpp" />
+    <ClCompile Include="..\Framework3\Util\Material.cpp" />
+    <ClCompile Include="..\Framework3\Util\ResourceLoader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Framework3\BaseApp.h" />
+    <ClInclude Include="..\Framework3\Config.h" />
+    <ClInclude Include="..\Framework3\CPU.h" />
+    <ClInclude Include="..\Framework3\Direct3D11\D3D11App.h" />
+    <ClInclude Include="..\Framework3\Direct3D11\Direct3D11Renderer.h" />
+    <ClInclude Include="..\Framework3\GUI\Button.h" />
+    <ClInclude Include="..\Framework3\GUI\CheckBox.h" />
+    <ClInclude Include="..\Framework3\GUI\Dialog.h" />
+    <ClInclude Include="..\Framework3\GUI\DropDownList.h" />
+    <ClInclude Include="..\Framework3\GUI\Label.h" />
+    <ClInclude Include="..\Framework3\GUI\Slider.h" />
+    <ClInclude Include="..\Framework3\GUI\Widget.h" />
+    <ClInclude Include="..\Framework3\Imaging\Image.h" />
+    <ClInclude Include="..\Framework3\Math\Vector.h" />
+    <ClInclude Include="..\Framework3\Platform.h" />
+    <ClInclude Include="..\Framework3\Renderer.h" />
+    <ClInclude Include="..\Framework3\Util\BSP.h" />
+    <ClInclude Include="..\Framework3\Util\Material.h" />
+    <ClInclude Include="..\Framework3\Util\Model.h" />
+    <ClInclude Include="..\Framework3\Util\ObjMaterialLib.h" />
+    <ClInclude Include="..\Framework3\Util\ParsingHelpers.h" />
+    <ClInclude Include="..\Framework3\Util\String.h" />
+    <ClInclude Include="..\Framework3\Util\Tokenizer.h" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="ShaderParamProvider.h" />
+    <ClInclude Include="..\Framework3\Util\File.h" />
+    <ClInclude Include="..\Framework3\Util\Optional.h" />
+    <ClInclude Include="..\Framework3\Util\ResourceLoader.h" />
+    <ClInclude Include="..\Framework3\Util\Resource.h" />
+    <ClInclude Include="..\Framework3\Util\ArrayMap.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Framework3\Windows\Resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Clustered.shd" />
+    <None Include="DeferredLighting.shd">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ForwardGeometry.shd">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ZOnly.shd">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="RenderDepthMoments.shd">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{b5857797-d396-40ae-baea-27d2929d645d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
