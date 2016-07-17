@@ -1,72 +1,117 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\Framework3\BaseApp.cpp" />
-    <ClCompile Include="..\Framework3\Config.cpp" />
-    <ClCompile Include="..\Framework3\CPU.cpp" />
-    <ClCompile Include="..\Framework3\Direct3D11\D3D11App.cpp" />
-    <ClCompile Include="..\Framework3\Direct3D11\Direct3D11Renderer.cpp" />
-    <ClCompile Include="..\Framework3\GUI\Button.cpp" />
-    <ClCompile Include="..\Framework3\GUI\CheckBox.cpp" />
-    <ClCompile Include="..\Framework3\GUI\Dialog.cpp" />
-    <ClCompile Include="..\Framework3\GUI\DropDownList.cpp" />
-    <ClCompile Include="..\Framework3\GUI\Label.cpp" />
-    <ClCompile Include="..\Framework3\GUI\Slider.cpp" />
-    <ClCompile Include="..\Framework3\GUI\Widget.cpp" />
-    <ClCompile Include="..\Framework3\Imaging\Image.cpp" />
-    <ClCompile Include="..\Framework3\Math\Vector.cpp" />
-    <ClCompile Include="..\Framework3\Platform.cpp" />
-    <ClCompile Include="..\Framework3\Renderer.cpp" />
-    <ClCompile Include="..\Framework3\Util\BSP.cpp" />
-    <ClCompile Include="..\Framework3\Util\Model.cpp" />
-    <ClCompile Include="..\Framework3\Util\ObjMaterialLib.cpp" />
-    <ClCompile Include="..\Framework3\Util\ParsingHelpers.cpp" />
-    <ClCompile Include="..\Framework3\Util\String.cpp" />
-    <ClCompile Include="..\Framework3\Util\Tokenizer.cpp" />
-    <ClCompile Include="..\Framework3\Windows\WindowsBase.cpp" />
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="ShaderParamProvider.cpp" />
-    <ClCompile Include="..\Framework3\Util\File.cpp" />
-    <ClCompile Include="..\Framework3\Util\Material.cpp" />
-    <ClCompile Include="..\Framework3\Util\ResourceLoader.cpp" />
+    <ClCompile Include="..\RenderFramework\Audio\Audio.cpp" />
+    <ClCompile Include="..\RenderFramework\BaseApp.cpp" />
+    <ClCompile Include="..\RenderFramework\Config.cpp" />
+    <ClCompile Include="..\RenderFramework\CPU.cpp" />
+    <ClCompile Include="..\RenderFramework\Direct3D11\D3D11App.cpp" />
+    <ClCompile Include="..\RenderFramework\Direct3D11\Direct3D11Renderer.cpp" />
+    <ClCompile Include="..\RenderFramework\GUI\Button.cpp" />
+    <ClCompile Include="..\RenderFramework\GUI\CheckBox.cpp" />
+    <ClCompile Include="..\RenderFramework\GUI\Dialog.cpp" />
+    <ClCompile Include="..\RenderFramework\GUI\DropDownList.cpp" />
+    <ClCompile Include="..\RenderFramework\GUI\Label.cpp" />
+    <ClCompile Include="..\RenderFramework\GUI\Slider.cpp" />
+    <ClCompile Include="..\RenderFramework\GUI\Widget.cpp" />
+    <ClCompile Include="..\RenderFramework\Imaging\Image.cpp" />
+    <ClCompile Include="..\RenderFramework\Math\Frustum.cpp" />
+    <ClCompile Include="..\RenderFramework\Math\MathTools.cpp" />
+    <ClCompile Include="..\RenderFramework\Math\Noise.cpp" />
+    <ClCompile Include="..\RenderFramework\Math\Reorder.cpp" />
+    <ClCompile Include="..\RenderFramework\Math\Scissor.cpp" />
+    <ClCompile Include="..\RenderFramework\Math\SIMD.cpp" />
+    <ClCompile Include="..\RenderFramework\Math\SphericalHarmonics.cpp" />
+    <ClCompile Include="..\RenderFramework\Math\Vector.cpp" />
+    <ClCompile Include="..\RenderFramework\Platform.cpp" />
+    <ClCompile Include="..\RenderFramework\Renderer.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\BSP.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\ConvexHull.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\File.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\Material.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\Model.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\ObjMaterialLib.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\ParsingHelpers.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\ResourceLoader.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\String.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\TexturePacker.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\Thread.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\Tokenizer.cpp" />
+    <ClCompile Include="..\RenderFramework\Windows\WindowsBase.cpp" />
+    <ClCompile Include="..\RenderFramework\RenderQueue.cpp" />
+    <ClCompile Include="..\RenderFramework\DrawCall.cpp" />
+    <ClCompile Include="..\RenderFramework\StateHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Framework3\BaseApp.h" />
-    <ClInclude Include="..\Framework3\Config.h" />
-    <ClInclude Include="..\Framework3\CPU.h" />
-    <ClInclude Include="..\Framework3\Direct3D11\D3D11App.h" />
-    <ClInclude Include="..\Framework3\Direct3D11\Direct3D11Renderer.h" />
-    <ClInclude Include="..\Framework3\GUI\Button.h" />
-    <ClInclude Include="..\Framework3\GUI\CheckBox.h" />
-    <ClInclude Include="..\Framework3\GUI\Dialog.h" />
-    <ClInclude Include="..\Framework3\GUI\DropDownList.h" />
-    <ClInclude Include="..\Framework3\GUI\Label.h" />
-    <ClInclude Include="..\Framework3\GUI\Slider.h" />
-    <ClInclude Include="..\Framework3\GUI\Widget.h" />
-    <ClInclude Include="..\Framework3\Imaging\Image.h" />
-    <ClInclude Include="..\Framework3\Math\Vector.h" />
-    <ClInclude Include="..\Framework3\Platform.h" />
-    <ClInclude Include="..\Framework3\Renderer.h" />
-    <ClInclude Include="..\Framework3\Util\BSP.h" />
-    <ClInclude Include="..\Framework3\Util\Material.h" />
-    <ClInclude Include="..\Framework3\Util\Model.h" />
-    <ClInclude Include="..\Framework3\Util\ObjMaterialLib.h" />
-    <ClInclude Include="..\Framework3\Util\ParsingHelpers.h" />
-    <ClInclude Include="..\Framework3\Util\String.h" />
-    <ClInclude Include="..\Framework3\Util\Tokenizer.h" />
     <ClInclude Include="App.h" />
-    <ClInclude Include="ShaderParamProvider.h" />
-    <ClInclude Include="..\Framework3\Util\File.h" />
-    <ClInclude Include="..\Framework3\Util\Optional.h" />
-    <ClInclude Include="..\Framework3\Util\ResourceLoader.h" />
-    <ClInclude Include="..\Framework3\Util\Resource.h" />
-    <ClInclude Include="..\Framework3\Util\ArrayMap.h" />
+    <ClInclude Include="..\RenderFramework\Audio\al.h" />
+    <ClInclude Include="..\RenderFramework\Audio\alc.h" />
+    <ClInclude Include="..\RenderFramework\Audio\alut.h" />
+    <ClInclude Include="..\RenderFramework\Audio\Audio.h" />
+    <ClInclude Include="..\RenderFramework\Audio\codec.h" />
+    <ClInclude Include="..\RenderFramework\Audio\ogg.h" />
+    <ClInclude Include="..\RenderFramework\Audio\os_types.h" />
+    <ClInclude Include="..\RenderFramework\Audio\vorbisfile.h" />
+    <ClInclude Include="..\RenderFramework\BaseApp.h" />
+    <ClInclude Include="..\RenderFramework\Config.h" />
+    <ClInclude Include="..\RenderFramework\CPU.h" />
+    <ClInclude Include="..\RenderFramework\Direct3D11\D3D11App.h" />
+    <ClInclude Include="..\RenderFramework\Direct3D11\Direct3D11Renderer.h" />
+    <ClInclude Include="..\RenderFramework\GUI\Button.h" />
+    <ClInclude Include="..\RenderFramework\GUI\CheckBox.h" />
+    <ClInclude Include="..\RenderFramework\GUI\Dialog.h" />
+    <ClInclude Include="..\RenderFramework\GUI\DropDownList.h" />
+    <ClInclude Include="..\RenderFramework\GUI\Label.h" />
+    <ClInclude Include="..\RenderFramework\GUI\Slider.h" />
+    <ClInclude Include="..\RenderFramework\GUI\Widget.h" />
+    <ClInclude Include="..\RenderFramework\Imaging\Image.h" />
+    <ClInclude Include="..\RenderFramework\Imaging\jconfig.h" />
+    <ClInclude Include="..\RenderFramework\Imaging\jmorecfg.h" />
+    <ClInclude Include="..\RenderFramework\Imaging\jpeglib.h" />
+    <ClInclude Include="..\RenderFramework\Imaging\png.h" />
+    <ClInclude Include="..\RenderFramework\Imaging\pngconf.h" />
+    <ClInclude Include="..\RenderFramework\Imaging\zconf.h" />
+    <ClInclude Include="..\RenderFramework\Imaging\zlib.h" />
+    <ClInclude Include="..\RenderFramework\Math\Frustum.h" />
+    <ClInclude Include="..\RenderFramework\Math\MathTools.h" />
+    <ClInclude Include="..\RenderFramework\Math\MyMath.h" />
+    <ClInclude Include="..\RenderFramework\Math\Noise.h" />
+    <ClInclude Include="..\RenderFramework\Math\Reorder.h" />
+    <ClInclude Include="..\RenderFramework\Math\Scissor.h" />
+    <ClInclude Include="..\RenderFramework\Math\SIMD.h" />
+    <ClInclude Include="..\RenderFramework\Math\SphericalHarmonics.h" />
+    <ClInclude Include="..\RenderFramework\Math\Vector.h" />
+    <ClInclude Include="..\RenderFramework\Platform.h" />
+    <ClInclude Include="..\RenderFramework\Renderer.h" />
+    <ClInclude Include="..\RenderFramework\Util\Array.h" />
+    <ClInclude Include="..\RenderFramework\Util\ArrayMap.h" />
+    <ClInclude Include="..\RenderFramework\Util\BSP.h" />
+    <ClInclude Include="..\RenderFramework\Util\ConvexHull.h" />
+    <ClInclude Include="..\RenderFramework\Util\File.h" />
+    <ClInclude Include="..\RenderFramework\Util\Hash.h" />
+    <ClInclude Include="..\RenderFramework\Util\KdTree.h" />
+    <ClInclude Include="..\RenderFramework\Util\Material.h" />
+    <ClInclude Include="..\RenderFramework\Util\Model.h" />
+    <ClInclude Include="..\RenderFramework\Util\ObjMaterialLib.h" />
+    <ClInclude Include="..\RenderFramework\Util\Optional.h" />
+    <ClInclude Include="..\RenderFramework\Util\ParsingHelpers.h" />
+    <ClInclude Include="..\RenderFramework\Util\Queue.h" />
+    <ClInclude Include="..\RenderFramework\Util\Resource.h" />
+    <ClInclude Include="..\RenderFramework\Util\ResourceLoader.h" />
+    <ClInclude Include="..\RenderFramework\Util\String.h" />
+    <ClInclude Include="..\RenderFramework\Util\TexturePacker.h" />
+    <ClInclude Include="..\RenderFramework\Util\Thread.h" />
+    <ClInclude Include="..\RenderFramework\Util\Tokenizer.h" />
+    <ClInclude Include="..\RenderFramework\Windows\resource.h" />
+    <ClInclude Include="..\RenderFramework\RenderQueue.h" />
+    <ClInclude Include="..\RenderFramework\DrawCall.h" />
+    <ClInclude Include="..\RenderFramework\RenderDefs.h" />
+    <ClInclude Include="..\RenderFramework\ShaderDataGen.h" />
+    <ClInclude Include="..\RenderFramework\ShaderData.h" />
+    <ClInclude Include="..\RenderFramework\StateHelper.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\Framework3\Windows\Resources.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Clustered.shd" />
     <None Include="DeferredLighting.shd">
       <Filter>Shaders</Filter>
     </None>
@@ -79,10 +124,17 @@
     <None Include="RenderDepthMoments.shd">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shadow.inc.shd">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\ShaderDataGen.def" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
       <UniqueIdentifier>{b5857797-d396-40ae-baea-27d2929d645d}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\RenderFramework\Windows\Resources.rc" />
   </ItemGroup>
 </Project>
