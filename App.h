@@ -19,10 +19,10 @@
 *                                                                *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "../Framework3/Direct3D11/D3D11App.h"
-#include "../Framework3/Util/Model.h"
-#include "../Framework3/Util/BSP.h"
-#include "../Framework3/Util/ObjMaterialLib.h"
+#include "../RenderFramework/Direct3D11/D3D11App.h"
+#include "../RenderFramework/Util/Model.h"
+#include "../RenderFramework/Util/BSP.h"
+#include "../RenderFramework/Util/ObjMaterialLib.h"
 #include <memory>
 
 struct Light

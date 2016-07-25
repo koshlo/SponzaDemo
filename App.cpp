@@ -20,8 +20,10 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "App.h"
-#include "../Framework3/Util/ResourceLoader.h"
+#include "../RenderFramework/Util/ResourceLoader.h"
 #include <array>
+#include "../RenderFramework/RenderQueue.h"
+#include "../RenderFramework/StateHelper.h"
 
 BaseApp *app = new App();
 
@@ -154,6 +156,17 @@ bool App::init()
 	int tab = m_paramDialog->addTab("Test");
 	m_paramDialog->addWidget(tab, new Slider(10, 0, 100, 20, 0, 1, 0));
 	widgets.addFirst(m_paramDialog);
+
+	StateHelper stateHelper(renderer);
+
+	RenderQueue queue;
+	BatchDrawCall& dc = queue.AddRenderCommand<BatchDrawCall>();
+	dc.batchNumber = 42;
+	dc.shaderDataCount = 24;
+	BatchDrawCall& dc2 = queue.AddRenderCommand<BatchDrawCall>();
+	dc2.batchNumber = 24;
+	dc2.shaderDataCount = 42;
+	queue.SubmitAll(renderer, &stateHelper);
 
 	return true;
 }
