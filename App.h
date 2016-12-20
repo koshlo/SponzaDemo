@@ -22,6 +22,8 @@
 #include "../RenderFramework/Direct3D11/D3D11App.h"
 #include "../RenderFramework/Util/BSP.h"
 #include "../RenderFramework/Util/SceneObject.h"
+#include "../RenderFramework/Shaders/Scene.data.fx"
+
 #include <memory>
 
 struct Light
@@ -64,11 +66,10 @@ protected:
     TextureID m_blurredVarianceTargets[2];
 	SamplerStateID m_pointClamp;
     SamplerStateID m_bilinearSampler;
-	BlendStateID m_BlendAdd;
-	DepthStateID m_DepthTest;
+
+	SceneShaderData m_sceneShaderData;
 
 	SceneObject m_Scene;
-
 	Model m_Sphere;
 
 	Dialog* m_paramDialog;

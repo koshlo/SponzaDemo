@@ -118,11 +118,9 @@ bool App::load()
 	String modelPath;
 	modelPath.sprintf("%s%s", RenderResourceLoader::DataPath(), modelName);
 	RenderResourceLoader loader(*gfxDevice);
-	if (!m_Scene.Load(modelPath.dataPtr(), loader)) return false;
+	if (!m_Scene.Load(modelPath.dataPtr(), loader, *shaderCache, *renderStateCache)) return false;
 
 	// Shaders
-	if (!SceneObject::SetupGeometryShader("ForwardGeometry.fx", gfxDevice)) return false;
-
 	if ((m_renderVarianceMap = gfxDevice->addShader("RenderDepthMoments.fx")) == SHADER_NONE) return false;
 	if ((m_deferredLighting	= gfxDevice->addShader("DeferredLighting.fx")) == SHADER_NONE) return false;
     if ((m_gausBlurCompute = gfxDevice->addComputeShader("GaussianBlur.fx")) == SHADER_NONE) return false;
@@ -138,11 +136,6 @@ bool App::load()
 
 	if ((m_DepthRT = gfxDevice->addRenderDepth(width, height, 1, FORMAT_D16, 1, SS_NONE, 0)) == TEXTURE_NONE) return false;
     if ((m_VarianceMapDepthRT = gfxDevice->addRenderDepth(ShadowMapResolution, ShadowMapResolution, 1, FORMAT_D16, 1)) == TEXTURE_NONE) return false;
-
-	if ((m_DepthTest = gfxDevice->addDepthState(true, true, GEQUAL)) == DS_NONE) return false;
-
-	
-	m_Scene.PrepareDrawData(gfxDevice);
 
 	return true;
 }
@@ -228,7 +221,7 @@ mat4 App::renderDepthMapPass()
 	mat4 lightView(lightRotation, vec4(0, 0, 0, 1));
 	mat4 lightViewProj = lightProjection * lightView;
 
-	gfxDevice->changeRenderTarget(m_VarianceMap, m_VarianceMapDepthRT);
+	/*gfxDevice->changeRenderTarget(m_VarianceMap, m_VarianceMapDepthRT);
 	gfxDevice->clear(true, true, float4(0, 0, 0, 0), 0.0f);
 
 	gfxDevice->reset();
@@ -238,8 +231,7 @@ mat4 App::renderDepthMapPass()
 	gfxDevice->setShaderConstant4x4f("ViewProj", lightViewProj);
 	gfxDevice->setShaderConstant1f("ExponentialWarpPower", ExponentialWarpPower);
 	gfxDevice->apply();
-
-
+	*/
 
     gfxDevice->changeRenderTargets(NULL, 0, TEXTURE_NONE);
 
@@ -248,19 +240,17 @@ mat4 App::renderDepthMapPass()
 
 void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 {
-	gfxDevice->changeRenderTarget(FB_COLOR, m_DepthRT);
-	gfxDevice->clear(true, true, float4(0, 0, 0, 0), 0.0f);
-	gfxDevice->reset();
-	gfxDevice->setRasterizerState(cullBack);
-	gfxDevice->setDepthState(m_DepthTest);
+	//gfxDevice->changeRenderTarget(FB_COLOR, m_DepthRT);
 
 	float4x4 view = rotateXY(-wx, -wy);
 	view.translate(-camPos);
 	float4x4 viewProj = m_projectionMatrix * view;
 
-	SceneObject::SetViewProjection(viewProj);
-	SceneObject::SetViewport(vec2(static_cast<float>(width), static_cast<float>(height)));
-	SceneObject::SetSunLighting(-SunDirection, SunIntensity, Ambient);
+	m_sceneShaderData.SetViewProjection(viewProj);
+	m_sceneShaderData.SetViewport(vec2(static_cast<float>(width), static_cast<float>(height)));
+	m_sceneShaderData.SetSunDirection(-SunDirection);
+	m_sceneShaderData.SetSunIntensity(SunIntensity);
+	m_sceneShaderData.SetAmbient(Ambient);
 	
 	ShadowShaderData shadowShaderData;
 	shadowShaderData.SetVarianceSampler(m_bilinearSampler);
