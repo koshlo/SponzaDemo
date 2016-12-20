@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
@@ -37,21 +45,31 @@
     <ClCompile Include="..\RenderFramework\Platform.cpp" />
     <ClCompile Include="..\RenderFramework\Renderer.cpp" />
     <ClCompile Include="..\RenderFramework\RenderQueue.cpp" />
+    <ClCompile Include="..\RenderFramework\RenderState.cpp" />
+    <ClCompile Include="..\RenderFramework\Shaders\ShaderCache.cpp" />
     <ClCompile Include="..\RenderFramework\StateHelper.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\AABB.cpp" />
     <ClCompile Include="..\RenderFramework\Util\BSP.cpp" />
     <ClCompile Include="..\RenderFramework\Util\ConvexHull.cpp" />
     <ClCompile Include="..\RenderFramework\Util\File.cpp" />
     <ClCompile Include="..\RenderFramework\Util\Material.cpp" />
     <ClCompile Include="..\RenderFramework\Util\Model.cpp" />
-    <ClCompile Include="..\RenderFramework\Util\ObjMaterialLib.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\ObjMaterialLib.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="..\RenderFramework\Util\ParsingHelpers.cpp" />
     <ClCompile Include="..\RenderFramework\Util\ResourceLoader.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\SceneObject.cpp" />
     <ClCompile Include="..\RenderFramework\Util\String.cpp" />
     <ClCompile Include="..\RenderFramework\Util\TexturePacker.cpp" />
     <ClCompile Include="..\RenderFramework\Util\Thread.cpp" />
     <ClCompile Include="..\RenderFramework\Util\Tokenizer.cpp" />
     <ClCompile Include="..\RenderFramework\Windows\WindowsBase.cpp" />
-    <ClCompile Include="App.cpp" />
+    <ClCompile Include="App.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</PreprocessToFile>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\RenderFramework\Audio\al.h" />
@@ -96,15 +114,19 @@
     <ClInclude Include="..\RenderFramework\RenderDefs.h" />
     <ClInclude Include="..\RenderFramework\Renderer.h" />
     <ClInclude Include="..\RenderFramework\RenderQueue.h" />
+    <ClInclude Include="..\RenderFramework\RenderState.h" />
     <ClInclude Include="..\RenderFramework\ShaderData.h" />
     <ClInclude Include="..\RenderFramework\ShaderDataGen.h" />
+    <ClInclude Include="..\RenderFramework\Shaders\ShaderCache.h" />
     <ClInclude Include="..\RenderFramework\StateHelper.h" />
+    <ClInclude Include="..\RenderFramework\Util\AABB.h" />
     <ClInclude Include="..\RenderFramework\Util\Array.h" />
     <ClInclude Include="..\RenderFramework\Util\ArrayMap.h" />
     <ClInclude Include="..\RenderFramework\Util\BSP.h" />
     <ClInclude Include="..\RenderFramework\Util\ConvexHull.h" />
     <ClInclude Include="..\RenderFramework\Util\File.h" />
     <ClInclude Include="..\RenderFramework\Util\Hash.h" />
+    <ClInclude Include="..\RenderFramework\Util\Helpers.h" />
     <ClInclude Include="..\RenderFramework\Util\KdTree.h" />
     <ClInclude Include="..\RenderFramework\Util\Material.h" />
     <ClInclude Include="..\RenderFramework\Util\Model.h" />
@@ -114,6 +136,7 @@
     <ClInclude Include="..\RenderFramework\Util\Queue.h" />
     <ClInclude Include="..\RenderFramework\Util\Resource.h" />
     <ClInclude Include="..\RenderFramework\Util\ResourceLoader.h" />
+    <ClInclude Include="..\RenderFramework\Util\SceneObject.h" />
     <ClInclude Include="..\RenderFramework\Util\String.h" />
     <ClInclude Include="..\RenderFramework\Util\TexturePacker.h" />
     <ClInclude Include="..\RenderFramework\Util\Thread.h" />
@@ -122,15 +145,36 @@
     <ClInclude Include="App.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\RenderFramework\ShaderDataGen.def" />
-    <None Include="DeferredLighting.shd" />
-    <None Include="ForwardGeometry.shd" />
-    <None Include="RenderDepthMoments.shd" />
-    <None Include="Shadow.inc.shd" />
-    <None Include="ZOnly.shd" />
+    <ClInclude Include="..\RenderFramework\ShaderDataGen.def" />
+    <None Include="DeferredLighting.fx" />
+    <None Include="ForwardGeometry.fx" />
+    <None Include="GaussianBlur.fx" />
+    <None Include="RenderDepthMoments.fx" />
+    <None Include="Shadow.inc.fx" />
+    <None Include="ZOnly.fx" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\RenderFramework\Windows\Resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shadow.data.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\RenderFramework\Shaders\Material.data.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\RenderFramework\Shaders\Scene.data.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GaussianBlur.data.fx">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{414E9ECC-66EC-4205-9144-06CC2AA7D243}</ProjectGuid>
@@ -143,10 +187,23 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -159,7 +216,13 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -168,7 +231,16 @@
     <OutDir>$(SolutionDir)\</OutDir>
     <LibraryPath>D:\Demos\RenderFramework\Libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LibraryPath>D:\Demos\RenderFramework\Libs;$(LibraryPath)</LibraryPath>
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)\</OutDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\</OutDir>
   </PropertyGroup>
@@ -186,6 +258,24 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>libc;msvcrt;libcmt</IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PreprocessToFile>false</PreprocessToFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>libc;msvcrt;libcmt</IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -212,6 +302,33 @@
       <OptimizeReferences>true</OptimizeReferences>
       <IgnoreSpecificDefaultLibraries>libc</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MinSpace</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NO_JPEG;NO_PNG;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <IgnoreSpecificDefaultLibraries>libc</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

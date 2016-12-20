@@ -1,11 +1,9 @@
 #define MIN_VARIANCE 0.005f
 #define LIGHT_BLEAD_REDUCTION 0.3f
 
-float ExponentialWarpPower;
+#include "Shadow.data.fx"
 
-SamplerState VarianceSampler;
-Texture2D<float2> ShadowMap;
-float4x4 ShadowMapProjection;
+#define ExponentialWarpPower ExpPower.x
 
 float WarpDepth(float d)
 {

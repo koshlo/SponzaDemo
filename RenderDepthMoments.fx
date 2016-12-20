@@ -14,7 +14,7 @@ float4 main(VsIn In) : SV_Position
 
 [Fragment shader]
 
-#include "Shadow.inc.shd"
+#include "Shadow.inc.fx"
 
 float ComputeBias(in float depth)
 {

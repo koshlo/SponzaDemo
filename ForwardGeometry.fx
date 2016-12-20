@@ -29,7 +29,7 @@ PsIn main(VsIn In)
 
 [Fragment shader]
 
-#include "Shadow.inc.shd"
+#include "Shadow.inc.fx"
 
 float3 MaterialDiffuse;
 float3 SunDirection;

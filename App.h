@@ -20,9 +20,8 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "../RenderFramework/Direct3D11/D3D11App.h"
-#include "../RenderFramework/Util/Model.h"
 #include "../RenderFramework/Util/BSP.h"
-#include "../RenderFramework/Util/ObjMaterialLib.h"
+#include "../RenderFramework/Util/SceneObject.h"
 #include <memory>
 
 struct Light
@@ -68,8 +67,7 @@ protected:
 	BlendStateID m_BlendAdd;
 	DepthStateID m_DepthTest;
 
-	Model m_Map;
-	Optional<ObjMaterialLib> m_mapMaterials;
+	SceneObject m_Scene;
 
 	Model m_Sphere;
 

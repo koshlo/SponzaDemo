@@ -42,6 +42,10 @@
     <ClCompile Include="..\RenderFramework\RenderQueue.cpp" />
     <ClCompile Include="..\RenderFramework\DrawCall.cpp" />
     <ClCompile Include="..\RenderFramework\StateHelper.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\SceneObject.cpp" />
+    <ClCompile Include="..\RenderFramework\Util\AABB.cpp" />
+    <ClCompile Include="..\RenderFramework\Shaders\ShaderCache.cpp" />
+    <ClCompile Include="..\RenderFramework\RenderState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -110,24 +114,42 @@
     <ClInclude Include="..\RenderFramework\ShaderDataGen.h" />
     <ClInclude Include="..\RenderFramework\ShaderData.h" />
     <ClInclude Include="..\RenderFramework\StateHelper.h" />
+    <ClInclude Include="..\RenderFramework\Util\SceneObject.h" />
+    <ClInclude Include="..\RenderFramework\Util\AABB.h" />
+    <ClInclude Include="..\RenderFramework\RenderState.h" />
+    <ClInclude Include="..\RenderFramework\ShaderDataGen.def" />
+    <ClInclude Include="..\RenderFramework\Shaders\ShaderCache.h" />
+    <ClInclude Include="..\RenderFramework\Util\Helpers.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DeferredLighting.shd">
+    <None Include="DeferredLighting.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="ForwardGeometry.shd">
+    <None Include="ForwardGeometry.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="ZOnly.shd">
+    <None Include="RenderDepthMoments.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="RenderDepthMoments.shd">
+    <None Include="Shadow.inc.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shadow.inc.shd">
+    <None Include="ZOnly.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\RenderFramework\ShaderDataGen.def" />
+    <None Include="Shadow.data.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="GaussianBlur.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\Material.data.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\Scene.data.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="GaussianBlur.data.fx" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

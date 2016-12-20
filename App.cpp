@@ -20,78 +20,18 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "App.h"
-#include "../RenderFramework/Util/ResourceLoader.h"
 #include <array>
+
+#include "../RenderFramework/Util/ResourceLoader.h"
 #include "../RenderFramework/RenderQueue.h"
 #include "../RenderFramework/StateHelper.h"
+#include "../RenderFramework/Util/SceneObject.h"
+#include "../RenderFramework/Util/Helpers.h"
+
+#include "Shadow.data.fx"
+#include "GaussianBlur.data.fx"
 
 BaseApp *app = new App();
-
-class AABB
-{
-public:
-	AABB(const float* minCoord, const float* maxCoord) :
-		_left(minCoord[0]),
-		_bottom(minCoord[1]),
-		_front(minCoord[2])
-	{
-		SetRight(maxCoord[0]);
-		SetTop(maxCoord[1]);
-		SetBack(maxCoord[2]);
-	}
-
-	float GetLeft() const { return _left; }
-	float GetBottom() const { return _bottom; }
-	float GetFront() const { return _front; }
-	float GetRight() const { return _left + _width; }
-	float GetTop() const { return _bottom + _height; }
-	float GetBack() const { return _front + _depth; }
-
-	void SetRight(float right) { _width = right - _left; }
-	void SetTop(float top) { _height = top - _bottom; }
-	void SetBack(float back) { _depth = back - _front; }
-
-	typedef std::array<vec3, 8> PointArray;
-	PointArray GetPoints() const
-	{
-		PointArray points = {
-			vec3(_left, _bottom, _front),
-			vec3(_left, _bottom, GetBack()),
-			vec3(_left, GetTop(), _front),
-			vec3(_left, GetTop(), GetBack()),
-			vec3(GetRight(), _bottom, _front),
-			vec3(GetRight(), _bottom, GetBack()),
-			vec3(GetRight(), GetTop(), _front),
-			vec3(GetRight(), GetTop(), GetBack())
-		};
-		return points;
-	}
-private:
-	float _left, _bottom, _front;
-	float _width, _height, _depth;
-};
-
-AABB RotateAABB(const AABB& aabb, mat3 rotation)
-{
-	AABB::PointArray points = aabb.GetPoints();
-	for (AABB::PointArray::size_type i = 0; i < points.size(); ++i)
-	{
-		points[i] = rotation * points[i];
-	}
-	vec3 nearPoint = points[0];
-	vec3 farPoint = points[0];
-	for (AABB::PointArray::size_type i = 0; i < points.size(); ++i)
-	{
-		vec3 curPoint = points[i];
-		for (unsigned int j = 0; j < 3; ++j)
-		{
-			nearPoint[j] = min(curPoint[j], nearPoint[j]);
-			farPoint[j] = max(curPoint[j], farPoint[j]);
-		}
-	}
-	return AABB(nearPoint, farPoint);
-}
- 
 
 bool App::onKey(const uint key, const bool pressed)
 {
@@ -131,22 +71,17 @@ void App::onSize(const int w, const int h)
 	const float far_plane = 1000.0f;
 
 	m_projectionMatrix = toD3DProjection(perspectiveMatrixY(1.2f, w, h, far_plane, near_plane));
-	if (renderer)
+	if (gfxDevice)
 	{
 		// Make sure render targets are the size of the window
-		//renderer->resizeRenderTarget(m_BaseRT,      w, h, 1, 1, 1);
-		//renderer->resizeRenderTarget(m_NormalRT,    w, h, 1, 1, 1);
-		renderer->resizeRenderTarget(m_VarianceMap,     w, h, 1, 1, 1);
+		//gfxDevice->resizeRenderTarget(m_BaseRT,      w, h, 1, 1, 1);
+		//gfxDevice->resizeRenderTarget(m_NormalRT,    w, h, 1, 1, 1);
+		gfxDevice->resizeRenderTarget(m_VarianceMap,     w, h, 1, 1, 1);
 	}
 }
 
 bool App::init()
 {
-	const char* modelName = "banner.obj";
-	String modelPath;
-	modelPath.sprintf("%s%s", RenderResourceLoader::DataPath(), modelName);
-	if (!m_Map.loadObj(modelPath.dataPtr())) return false;
-
 	// No framework created depth buffer
 	depthBits = 0;
 	speed = 100;
@@ -156,17 +91,6 @@ bool App::init()
 	int tab = m_paramDialog->addTab("Test");
 	m_paramDialog->addWidget(tab, new Slider(10, 0, 100, 20, 0, 1, 0));
 	widgets.addFirst(m_paramDialog);
-
-	StateHelper stateHelper(renderer);
-
-	RenderQueue queue;
-	BatchDrawCall& dc = queue.AddRenderCommand<BatchDrawCall>();
-	dc.batchNumber = 42;
-	dc.shaderDataCount = 24;
-	BatchDrawCall& dc2 = queue.AddRenderCommand<BatchDrawCall>();
-	dc2.batchNumber = 24;
-	dc2.shaderDataCount = 42;
-	queue.SubmitAll(renderer, &stateHelper);
 
 	return true;
 }
@@ -190,40 +114,35 @@ const int ShadowMapResolution = 512;
 
 bool App::load()
 {
-	const MaterialLibResId& matName = m_Map.getMaterialLib();
-	bool isPbr = false;
-	RenderResourceLoader loader(*renderer);
-	if (matName.isValid())
-	{
-		loader.SyncLoad(matName, isPbr, &m_mapMaterials);
-	}
-	if (!m_mapMaterials)
-	{
-		return false;
-	}
+	const char* modelName = "banner.obj";
+	String modelPath;
+	modelPath.sprintf("%s%s", RenderResourceLoader::DataPath(), modelName);
+	RenderResourceLoader loader(*gfxDevice);
+	if (!m_Scene.Load(modelPath.dataPtr(), loader)) return false;
 
 	// Shaders
-	if ((m_renderVarianceMap = renderer->addShader("RenderDepthMoments.shd")) == SHADER_NONE) return false;
-	if ((m_forwardGeometry = renderer->addShader("ForwardGeometry.shd")) == SHADER_NONE) return false;
-	if ((m_deferredLighting	= renderer->addShader("DeferredLighting.shd")) == SHADER_NONE) return false;
-    if ((m_gausBlurCompute = renderer->addComputeShader("GaussianBlur.csd")) == SHADER_NONE) return false;
+	if (!SceneObject::SetupGeometryShader("ForwardGeometry.fx", gfxDevice)) return false;
 
-	if ((m_pointClamp = renderer->addSamplerState(NEAREST, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
-	if ((m_bilinearSampler = renderer->addSamplerState(BILINEAR, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
+	if ((m_renderVarianceMap = gfxDevice->addShader("RenderDepthMoments.fx")) == SHADER_NONE) return false;
+	if ((m_deferredLighting	= gfxDevice->addShader("DeferredLighting.fx")) == SHADER_NONE) return false;
+    if ((m_gausBlurCompute = gfxDevice->addComputeShader("GaussianBlur.fx")) == SHADER_NONE) return false;
+
+	if ((m_pointClamp = gfxDevice->addSamplerState(NEAREST, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
+	if ((m_bilinearSampler = gfxDevice->addSamplerState(BILINEAR, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
 
     // Main render targets
 	FORMAT shadowMapFormat = FORMAT_RG32F;
-    if ((m_VarianceMap = renderer->addRenderTarget (ShadowMapResolution, ShadowMapResolution, shadowMapFormat, SS_NONE, 0)) == TEXTURE_NONE) return false;
-    if ((m_blurredVarianceTargets[0] = renderer->addRenderTarget(ShadowMapResolution, ShadowMapResolution, shadowMapFormat, SS_NONE, ADD_UAV)) == TEXTURE_NONE) return false;
-	if ((m_blurredVarianceTargets[1] = renderer->addRenderTarget(ShadowMapResolution, ShadowMapResolution, shadowMapFormat, SS_NONE, ADD_UAV)) == TEXTURE_NONE) return false;
+    if ((m_VarianceMap = gfxDevice->addRenderTarget (ShadowMapResolution, ShadowMapResolution, shadowMapFormat, SS_NONE, 0)) == TEXTURE_NONE) return false;
+    if ((m_blurredVarianceTargets[0] = gfxDevice->addRenderTarget(ShadowMapResolution, ShadowMapResolution, shadowMapFormat, SS_NONE, ADD_UAV)) == TEXTURE_NONE) return false;
+	if ((m_blurredVarianceTargets[1] = gfxDevice->addRenderTarget(ShadowMapResolution, ShadowMapResolution, shadowMapFormat, SS_NONE, ADD_UAV)) == TEXTURE_NONE) return false;
 
-	if ((m_DepthRT = renderer->addRenderDepth(width, height, 1, FORMAT_D16, 1, SS_NONE, 0)) == TEXTURE_NONE) return false;
-    if ((m_VarianceMapDepthRT = renderer->addRenderDepth(ShadowMapResolution, ShadowMapResolution, 1, FORMAT_D16, 1)) == TEXTURE_NONE) return false;
+	if ((m_DepthRT = gfxDevice->addRenderDepth(width, height, 1, FORMAT_D16, 1, SS_NONE, 0)) == TEXTURE_NONE) return false;
+    if ((m_VarianceMapDepthRT = gfxDevice->addRenderDepth(ShadowMapResolution, ShadowMapResolution, 1, FORMAT_D16, 1)) == TEXTURE_NONE) return false;
 
-	if ((m_DepthTest = renderer->addDepthState(true, true, GEQUAL)) == DS_NONE) return false;
+	if ((m_DepthTest = gfxDevice->addDepthState(true, true, GEQUAL)) == DS_NONE) return false;
 
 	
-    if (!m_Map.makeDrawable(renderer, true, m_forwardGeometry)) return false;
+	m_Scene.PrepareDrawData(gfxDevice);
 
 	return true;
 }
@@ -234,7 +153,7 @@ void App::unload()
 
 const float ExponentialWarpPower = 5.0f;
 
-TextureID makeBlurPass(Renderer* renderer, ShaderID shader, TextureID srcTexture, TextureID* destTextures, float2 texSize)
+TextureID makeBlurPass(StateHelper* stateHelper, ShaderID shader, TextureID srcTexture, TextureID* destTextures, float2 texSize)
 {
 	const float sigma = 3.0f;
 	const float sigmaSqr = sigma * sigma;
@@ -248,33 +167,34 @@ TextureID makeBlurPass(Renderer* renderer, ShaderID shader, TextureID srcTexture
 		weights[i] = gaussMultiplier * expf( -(x * x) / (2 * sigmaSqr) );
 	}
 
-    renderer->setShader(shader);
-    renderer->setTexture("SourceTexture", srcTexture);
-    renderer->setUnorderedAccessTexture("DestTexture", destTextures[0]);
-	renderer->setShaderConstantArray1f("Weights", weights.data(), weights.size());
-	renderer->setShaderConstant2f("TextureSize", texSize);
-	renderer->setShaderConstant1i("BlurHalfSize", weights.size() - 1);
-	renderer->setShaderConstant2f("SampleStep", float2(1, 0));
-	renderer->setShaderConstant1f("ExponentialWarpPower", ExponentialWarpPower);
-	renderer->apply();
-	
+	static const float2 HorizontalStep(1, 0);
+	static const float2 VerticalStep(0, 1);
+
+	BlurShaderData blurShaderParams;
+	blurShaderParams.SetSourceTexture(srcTexture);
+	blurShaderParams.SetDestTexture(destTextures[0]);
+	blurShaderParams.SetSampleParams(float4(texSize, HorizontalStep));
+	blurShaderParams.SetBlurHalfSize(weights.size() - 1);
+	blurShaderParams.SetWeightsRaw(weights.data(), weights.size() * sizeof(float));
+
+	ShadowShaderData shadowShaderParams;
+	shadowShaderParams.SetExpPower(ExponentialWarpPower);
+
 	const uint nThreadsX = 16, nThreadsY = 16;
-	const uint dispThreadsX = ShadowMapResolution / nThreadsX;
-	const uint dispThreadsY = ShadowMapResolution / nThreadsY;
-	renderer->dispatchCompute(dispThreadsX, dispThreadsY, 1);
+	DispatchGroup dispatchGroup;
+	dispatchGroup.x = ShadowMapResolution / nThreadsX;
+	dispatchGroup.y = ShadowMapResolution / nThreadsY;
+	dispatchGroup.z = 1;
 
-	renderer->reset(RESET_UAV);
-	renderer->applyTextures();
+	ShaderData* shaderData[] = { &blurShaderParams, &shadowShaderParams };
 
-	renderer->setShaderConstant2f("SampleStep", float2(0, 1));
-	renderer->setTexture("SourceTexture", destTextures[0]);
-	renderer->setUnorderedAccessTexture("DestTexture", destTextures[1]);
-	renderer->applyTextures();
-	renderer->applyConstants();
-	renderer->dispatchCompute(dispThreadsX, dispThreadsY, 1);
-
-	renderer->reset(RESET_UAV);
-	renderer->applyTextures();
+	RenderQueue::DispatchCompute(stateHelper, dispatchGroup, shader, shaderData, array_size(shaderData));
+	
+	blurShaderParams.SetSampleParams(float4(texSize, VerticalStep));
+	blurShaderParams.SetSourceTexture(destTextures[0]);
+	blurShaderParams.SetDestTexture(destTextures[1]);
+	
+	RenderQueue::DispatchCompute(stateHelper, dispatchGroup, shader, shaderData, array_size(shaderData));
 
 	return destTextures[1];
 }
@@ -284,7 +204,7 @@ void App::drawFrame()
 	mat4 lightViewProj = renderDepthMapPass();
 	float shadowMapRes = ShadowMapResolution;
 	TextureID blurredVariance =
-		makeBlurPass(renderer, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
+		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
 	renderForwardPass(lightViewProj, blurredVariance);
 }
 
@@ -294,10 +214,7 @@ const float3 Ambient = float3(0.2f, 0.2f, 0.4f);
 
 mat4 App::renderDepthMapPass()
 {
-	float aabbCoordsMin[3];
-	float aabbCoordsMax[3];
-	m_Map.getBoundingBox(m_Map.findStream(TYPE_VERTEX), aabbCoordsMin, aabbCoordsMax);
-	AABB boundingBox(aabbCoordsMin, aabbCoordsMax);
+	AABB boundingBox = m_Scene.GetBoundingBox();
 
 	AABB::PointArray bbPoints = boundingBox.GetPoints();
 
@@ -311,57 +228,48 @@ mat4 App::renderDepthMapPass()
 	mat4 lightView(lightRotation, vec4(0, 0, 0, 1));
 	mat4 lightViewProj = lightProjection * lightView;
 
-	renderer->changeRenderTarget(m_VarianceMap, m_VarianceMapDepthRT);
-	renderer->clear(true, true, float4(0, 0, 0, 0), 0.0f);
+	gfxDevice->changeRenderTarget(m_VarianceMap, m_VarianceMapDepthRT);
+	gfxDevice->clear(true, true, float4(0, 0, 0, 0), 0.0f);
 
-	renderer->reset();
-	renderer->setRasterizerState(cullNone);
-	renderer->setDepthState(m_DepthTest);
-	renderer->setShader(m_renderVarianceMap);
-	renderer->setShaderConstant4x4f("ViewProj", lightViewProj);
-	renderer->setShaderConstant1f("ExponentialWarpPower", ExponentialWarpPower);
-	renderer->apply();
+	gfxDevice->reset();
+	gfxDevice->setRasterizerState(cullNone);
+	gfxDevice->setDepthState(m_DepthTest);
+	gfxDevice->setShader(m_renderVarianceMap);
+	gfxDevice->setShaderConstant4x4f("ViewProj", lightViewProj);
+	gfxDevice->setShaderConstant1f("ExponentialWarpPower", ExponentialWarpPower);
+	gfxDevice->apply();
 
-	for (uint i = 0; i < m_Map.getBatchCount(); ++i)
-	{
-		m_Map.drawBatch(renderer, i);
-	}
 
-    renderer->changeRenderTargets(NULL, 0, TEXTURE_NONE);
+
+    gfxDevice->changeRenderTargets(NULL, 0, TEXTURE_NONE);
 
 	return lightViewProj;
 }
 
 void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 {
+	gfxDevice->changeRenderTarget(FB_COLOR, m_DepthRT);
+	gfxDevice->clear(true, true, float4(0, 0, 0, 0), 0.0f);
+	gfxDevice->reset();
+	gfxDevice->setRasterizerState(cullBack);
+	gfxDevice->setDepthState(m_DepthTest);
+
 	float4x4 view = rotateXY(-wx, -wy);
 	view.translate(-camPos);
-	float4x4 view_proj = m_projectionMatrix * view;
+	float4x4 viewProj = m_projectionMatrix * view;
 
-	renderer->changeRenderTarget(FB_COLOR, m_DepthRT);
-	renderer->clear(true, true, float4(0, 0, 0, 0), 0.0f);
+	SceneObject::SetViewProjection(viewProj);
+	SceneObject::SetViewport(vec2(static_cast<float>(width), static_cast<float>(height)));
+	SceneObject::SetSunLighting(-SunDirection, SunIntensity, Ambient);
+	
+	ShadowShaderData shadowShaderData;
+	shadowShaderData.SetVarianceSampler(m_bilinearSampler);
+	shadowShaderData.SetShadowMap(varianceMap);
+	shadowShaderData.SetExpPower(ExponentialWarpPower);
+	shadowShaderData.SetShadowMapProjection(lightViewProj);
 
-	renderer->reset();
-	renderer->setRasterizerState(cullBack);
-	renderer->setDepthState(m_DepthTest);
-	renderer->setShader(m_forwardGeometry);
-	renderer->setShaderConstant1f("ExponentialWarpPower", ExponentialWarpPower);
-	renderer->setShaderConstant4x4f("ViewProj", view_proj);
-	renderer->setShaderConstant4x4f("ShadowMapProjection", lightViewProj);
-	renderer->setShaderConstant4x4f("InvViewProjection", !view_proj);
-	renderer->setShaderConstant2f("Viewport", vec2(static_cast<float>(width), static_cast<float>(height)));
-	renderer->setShaderConstant3f("SunDirection", -SunDirection);
-	renderer->setShaderConstant3f("SunIntensity", SunIntensity);
-	renderer->setShaderConstant3f("Ambient", Ambient);
-	renderer->setSamplerState("VarianceSampler", m_bilinearSampler);
-	renderer->setTexture("ShadowMap", varianceMap);
+	shadowShaderData.Apply(stateHelper);
 
-	renderer->apply();
-
-	for (uint i = 0; i < m_Map.getBatchCount(); ++i)
-	{
-		m_mapMaterials.getVal().applyMaterial(m_Map.getBatchMaterialName(i), renderer);
-		m_Map.drawBatch(renderer, i);
-	}
+	
 }
 

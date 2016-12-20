@@ -1,21 +1,15 @@
-#include "Shadow.inc.shd"
+#include "Shadow.inc.fx"
+#include "GaussianBlur.data.fx"
 
 #define THREAD_COUNT_X 	16
 #define THREAD_COUNT_Y 	16
-#define MAX_BLUR_SIZE	32
 #define CACHE_SIZE_X	THREAD_COUNT_X + MAX_BLUR_SIZE * 2
 #define CACHE_SIZE_Y	THREAD_COUNT_Y + MAX_BLUR_SIZE * 2
 
 groupshared uint TextureCache[CACHE_SIZE_X][CACHE_SIZE_Y];
 
-float2 	SampleStep;
-float4 	Weights[MAX_BLUR_SIZE/4];
-float2 	TextureSize;
-uint  	BlurHalfSize;
-
-Texture2D<float2> SourceTexture;
-RWTexture2D<float2> DestTexture;
-
+static float2 TextureSize = SampleParams.xy;
+static float2 SampleStep = SampleParams.zw;
 static float WeightsPacked[MAX_BLUR_SIZE] = (float[MAX_BLUR_SIZE])Weights;
 static uint2 MaxThreads = uint2(THREAD_COUNT_X, THREAD_COUNT_Y);
 static uint2 NumScatteredCacheWrites = ( uint2(BlurHalfSize, BlurHalfSize) * 2 - 1 ) / MaxThreads + 1;
@@ -152,7 +146,6 @@ void PerformBlur(uint3 threadId, uint3 groupThreadId)
 [numthreads(THREAD_COUNT_X, THREAD_COUNT_Y, 1)]
 void main(uint3 threadId : SV_DispatchThreadID, uint3 groupThreadId : SV_GroupThreadID, uint3 groupId : SV_GroupID, uint groupIndex : SV_GroupIndex)
 {
-	//DebugInitCache();
 	GatherTextureCache(threadId, groupThreadId, groupId, groupIndex);
 	GroupMemoryBarrierWithGroupSync();
 	PerformBlur(threadId, groupThreadId);
