@@ -29,6 +29,7 @@ PsIn main(VsIn In)
 
 [Fragment shader]
 
+#include "Material.data.fx"
 #include "Shadow.inc.fx"
 
 float3 MaterialDiffuse;

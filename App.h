@@ -23,6 +23,7 @@
 #include "../RenderFramework/Util/BSP.h"
 #include "../RenderFramework/Util/SceneObject.h"
 #include "../RenderFramework/Shaders/Scene.data.fx"
+#include "../RenderFramework/Shaders/Shadow.data.fx"
 
 #include <memory>
 
@@ -68,9 +69,12 @@ protected:
     SamplerStateID m_bilinearSampler;
 
 	SceneShaderData m_sceneShaderData;
+    ShadowShaderData m_shadowShaderData;
 
 	SceneObject m_Scene;
 	Model m_Sphere;
 
 	Dialog* m_paramDialog;
+
+    std::unique_ptr<RenderQueue> m_forwardQueue;
 };

@@ -27,9 +27,8 @@
 #include "../RenderFramework/StateHelper.h"
 #include "../RenderFramework/Util/SceneObject.h"
 #include "../RenderFramework/Util/Helpers.h"
+#include "../RenderFramework/Shaders/GaussianBlur.data.fx"
 
-#include "Shadow.data.fx"
-#include "GaussianBlur.data.fx"
 
 BaseApp *app = new App();
 
@@ -121,9 +120,8 @@ bool App::load()
 	if (!m_Scene.Load(modelPath.dataPtr(), loader, *shaderCache, *renderStateCache)) return false;
 
 	// Shaders
-	if ((m_renderVarianceMap = gfxDevice->addShader("RenderDepthMoments.fx")) == SHADER_NONE) return false;
-	if ((m_deferredLighting	= gfxDevice->addShader("DeferredLighting.fx")) == SHADER_NONE) return false;
-    if ((m_gausBlurCompute = gfxDevice->addComputeShader("GaussianBlur.fx")) == SHADER_NONE) return false;
+	if ((m_renderVarianceMap = gfxDevice->addShader("../RenderFramework/Shaders/RenderDepthMoments.fx")) == SHADER_NONE) return false;
+    if ((m_gausBlurCompute = gfxDevice->addComputeShader("../RenderFramework/Shaders/GaussianBlur.fx")) == SHADER_NONE) return false;
 
 	if ((m_pointClamp = gfxDevice->addSamplerState(NEAREST, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
 	if ((m_bilinearSampler = gfxDevice->addSamplerState(BILINEAR, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
@@ -136,6 +134,12 @@ bool App::load()
 
 	if ((m_DepthRT = gfxDevice->addRenderDepth(width, height, 1, FORMAT_D16, 1, SS_NONE, 0)) == TEXTURE_NONE) return false;
     if ((m_VarianceMapDepthRT = gfxDevice->addRenderDepth(ShadowMapResolution, ShadowMapResolution, 1, FORMAT_D16, 1)) == TEXTURE_NONE) return false;
+
+    const TextureID forwardRTs[] = { FB_COLOR };
+    m_forwardQueue.reset(new RenderQueue(gfxDevice, forwardRTs, array_size(forwardRTs), FB_DEPTH));
+    m_forwardQueue->AddShaderData(&m_sceneShaderData);
+    m_forwardQueue->AddShaderData(&m_shadowShaderData);
+    m_forwardQueue->SetClear(true, false, float4(0, 0, 0, 0), 1.0f);
 
 	return true;
 }
@@ -179,7 +183,7 @@ TextureID makeBlurPass(StateHelper* stateHelper, ShaderID shader, TextureID srcT
 	dispatchGroup.y = ShadowMapResolution / nThreadsY;
 	dispatchGroup.z = 1;
 
-	ShaderData* shaderData[] = { &blurShaderParams, &shadowShaderParams };
+	const ShaderData* shaderData[] = { &blurShaderParams, &shadowShaderParams };
 
 	RenderQueue::DispatchCompute(stateHelper, dispatchGroup, shader, shaderData, array_size(shaderData));
 	
@@ -199,6 +203,7 @@ void App::drawFrame()
 	TextureID blurredVariance =
 		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
 	renderForwardPass(lightViewProj, blurredVariance);
+    m_forwardQueue->SubmitAll(gfxDevice, stateHelper);
 }
 
 const float3 SunDirection = normalize(float3(-0.4f, -1.0f, 0.3f));
@@ -240,8 +245,6 @@ mat4 App::renderDepthMapPass()
 
 void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 {
-	//gfxDevice->changeRenderTarget(FB_COLOR, m_DepthRT);
-
 	float4x4 view = rotateXY(-wx, -wy);
 	view.translate(-camPos);
 	float4x4 viewProj = m_projectionMatrix * view;
@@ -252,14 +255,11 @@ void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 	m_sceneShaderData.SetSunIntensity(SunIntensity);
 	m_sceneShaderData.SetAmbient(Ambient);
 	
-	ShadowShaderData shadowShaderData;
-	shadowShaderData.SetVarianceSampler(m_bilinearSampler);
-	shadowShaderData.SetShadowMap(varianceMap);
-	shadowShaderData.SetExpPower(ExponentialWarpPower);
-	shadowShaderData.SetShadowMapProjection(lightViewProj);
+	m_shadowShaderData.SetVarianceSampler(m_bilinearSampler);
+	m_shadowShaderData.SetShadowMap(varianceMap);
+	m_shadowShaderData.SetExpPower(ExponentialWarpPower);
+	m_shadowShaderData.SetShadowMapProjection(lightViewProj);
 
-	shadowShaderData.Apply(stateHelper);
-
-	
+    m_Scene.Draw(*m_forwardQueue, 0);
 }
 
