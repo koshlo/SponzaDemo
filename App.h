@@ -24,6 +24,7 @@
 #include "../RenderFramework/Util/SceneObject.h"
 #include "../RenderFramework/Shaders/Scene.data.fx"
 #include "../RenderFramework/Shaders/Shadow.data.fx"
+#include "../RenderFramework/Shaders/ExpWarping.data.fx"
 
 #include <memory>
 
@@ -70,6 +71,7 @@ protected:
 
 	SceneShaderData m_sceneShaderData;
     ShadowShaderData m_shadowShaderData;
+    ExpWarpingShaderData m_expWarpingData;
 
 	SceneObject m_Scene;
 	Model m_Sphere;

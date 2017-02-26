@@ -125,9 +125,6 @@
     <None Include="DeferredLighting.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="ForwardGeometry.fx">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="RenderDepthMoments.fx">
       <Filter>Shaders</Filter>
     </None>
@@ -137,12 +134,6 @@
     <None Include="ZOnly.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shadow.data.fx">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="GaussianBlur.fx">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\RenderFramework\Shaders\Material.data.fx">
       <Filter>Shaders</Filter>
     </None>
@@ -150,6 +141,18 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="GaussianBlur.data.fx" />
+    <None Include="..\RenderFramework\Shaders\ForwardGeometry.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\ExpWarping.data.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\Shadow.data.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\GaussianBlur.fx">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

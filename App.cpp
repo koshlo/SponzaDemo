@@ -29,7 +29,6 @@
 #include "../RenderFramework/Util/Helpers.h"
 #include "../RenderFramework/Shaders/GaussianBlur.data.fx"
 
-
 BaseApp *app = new App();
 
 bool App::onKey(const uint key, const bool pressed)
@@ -139,6 +138,7 @@ bool App::load()
     m_forwardQueue.reset(new RenderQueue(gfxDevice, forwardRTs, array_size(forwardRTs), FB_DEPTH));
     m_forwardQueue->AddShaderData(&m_sceneShaderData);
     m_forwardQueue->AddShaderData(&m_shadowShaderData);
+    m_forwardQueue->AddShaderData(&m_expWarpingData);
     m_forwardQueue->SetClear(true, false, float4(0, 0, 0, 0), 1.0f);
 
 	return true;
@@ -174,8 +174,8 @@ TextureID makeBlurPass(StateHelper* stateHelper, ShaderID shader, TextureID srcT
 	blurShaderParams.SetBlurHalfSize(weights.size() - 1);
 	blurShaderParams.SetWeightsRaw(weights.data(), weights.size() * sizeof(float));
 
-	ShadowShaderData shadowShaderParams;
-	shadowShaderParams.SetExpPower(ExponentialWarpPower);
+	ExpWarpingShaderData warpShaderParams;
+    warpShaderParams.SetExpPower(float4(ExponentialWarpPower));
 
 	const uint nThreadsX = 16, nThreadsY = 16;
 	DispatchGroup dispatchGroup;
@@ -183,7 +183,7 @@ TextureID makeBlurPass(StateHelper* stateHelper, ShaderID shader, TextureID srcT
 	dispatchGroup.y = ShadowMapResolution / nThreadsY;
 	dispatchGroup.z = 1;
 
-	const ShaderData* shaderData[] = { &blurShaderParams, &shadowShaderParams };
+	const ShaderData* shaderData[] = { &blurShaderParams, &warpShaderParams };
 
 	RenderQueue::DispatchCompute(stateHelper, dispatchGroup, shader, shaderData, array_size(shaderData));
 	
@@ -257,8 +257,9 @@ void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 	
 	m_shadowShaderData.SetVarianceSampler(m_bilinearSampler);
 	m_shadowShaderData.SetShadowMap(varianceMap);
-	m_shadowShaderData.SetExpPower(ExponentialWarpPower);
 	m_shadowShaderData.SetShadowMapProjection(lightViewProj);
+
+    m_expWarpingData.SetExpPower(ExponentialWarpPower);
 
     m_Scene.Draw(*m_forwardQueue, 0);
 }

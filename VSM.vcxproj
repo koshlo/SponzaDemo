@@ -147,19 +147,12 @@
   <ItemGroup>
     <ClInclude Include="..\RenderFramework\ShaderDataGen.def" />
     <None Include="DeferredLighting.fx" />
-    <None Include="ForwardGeometry.fx" />
-    <None Include="GaussianBlur.fx" />
     <None Include="RenderDepthMoments.fx" />
     <None Include="Shadow.inc.fx" />
     <None Include="ZOnly.fx" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\RenderFramework\Windows\Resources.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shadow.data.fx">
-      <FileType>Document</FileType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\RenderFramework\Shaders\Material.data.fx">
@@ -173,6 +166,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GaussianBlur.data.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\RenderFramework\Shaders\ForwardGeometry.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\RenderFramework\Shaders\Shadow.data.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\RenderFramework\Shaders\ExpWarping.data.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\RenderFramework\Shaders\GaussianBlur.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
