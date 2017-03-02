@@ -141,6 +141,15 @@ bool App::load()
     m_forwardQueue->AddShaderData(&m_expWarpingData);
     m_forwardQueue->SetClear(true, false, float4(0, 0, 0, 0), 1.0f);
 
+    const TextureID shadowRTs[] = { m_VarianceMap };
+    m_shadowQueue.reset(new RenderQueue(gfxDevice, shadowRTs, array_size(shadowRTs), m_VarianceMapDepthRT));
+    m_shadowQueue->AddShaderData(&m_shadowShaderData);
+    m_shadowQueue->AddShaderData(&m_expWarpingData);
+    m_shadowQueue->SetClear(true, true, float4(0, 0, 0, 0), 0.0f);
+
+    RenderStateDesc shadowDesc{ m_renderVarianceMap, true, true, GEQUAL, CULL_BACK };
+    m_shadowState = renderStateCache->GetRenderState(shadowDesc);
+
 	return true;
 }
 
@@ -199,6 +208,7 @@ TextureID makeBlurPass(StateHelper* stateHelper, ShaderID shader, TextureID srcT
 void App::drawFrame()
 {
 	mat4 lightViewProj = renderDepthMapPass();
+    m_shadowQueue->SubmitAll(gfxDevice, stateHelper);
 	float shadowMapRes = ShadowMapResolution;
 	TextureID blurredVariance =
 		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
@@ -226,19 +236,10 @@ mat4 App::renderDepthMapPass()
 	mat4 lightView(lightRotation, vec4(0, 0, 0, 1));
 	mat4 lightViewProj = lightProjection * lightView;
 
-	/*gfxDevice->changeRenderTarget(m_VarianceMap, m_VarianceMapDepthRT);
-	gfxDevice->clear(true, true, float4(0, 0, 0, 0), 0.0f);
+    m_shadowShaderData.SetShadowMapProjection(lightViewProj);
+    m_expWarpingData.SetExpPower(ExponentialWarpPower);
 
-	gfxDevice->reset();
-	gfxDevice->setRasterizerState(cullNone);
-	gfxDevice->setDepthState(m_DepthTest);
-	gfxDevice->setShader(m_renderVarianceMap);
-	gfxDevice->setShaderConstant4x4f("ViewProj", lightViewProj);
-	gfxDevice->setShaderConstant1f("ExponentialWarpPower", ExponentialWarpPower);
-	gfxDevice->apply();
-	*/
-
-    gfxDevice->changeRenderTargets(NULL, 0, TEXTURE_NONE);
+    m_Scene.Draw(*m_shadowQueue, &m_shadowState, 0);
 
 	return lightViewProj;
 }

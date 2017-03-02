@@ -284,3 +284,4 @@ $RECYCLE.BIN/
 nsight_profiler.cfg
 *.db
 *.opendb
+*.exe

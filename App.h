@@ -68,6 +68,7 @@ protected:
     TextureID m_blurredVarianceTargets[2];
 	SamplerStateID m_pointClamp;
     SamplerStateID m_bilinearSampler;
+    RenderState m_shadowState;
 
 	SceneShaderData m_sceneShaderData;
     ShadowShaderData m_shadowShaderData;
@@ -79,4 +80,5 @@ protected:
 	Dialog* m_paramDialog;
 
     std::unique_ptr<RenderQueue> m_forwardQueue;
+    std::unique_ptr<RenderQueue> m_shadowQueue;
 };
