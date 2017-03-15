@@ -112,7 +112,7 @@ const int ShadowMapResolution = 512;
 
 bool App::load()
 {
-	const char* modelName = "banner.obj";
+	const char* modelName = "sponza.obj";
 	String modelPath;
 	modelPath.sprintf("%s%s", RenderResourceLoader::DataPath(), modelName);
 	RenderResourceLoader loader(*gfxDevice);
