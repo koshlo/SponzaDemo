@@ -99,8 +99,7 @@ void App::exit()
 
 bool App::initAPI()
 {
-	// Override the user's MSAA settings
-	return D3D11App::initAPI(D3D11, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, DXGI_FORMAT_UNKNOWN, 1, NO_SETTING_CHANGE | SAMPLE_BACKBUFFER);
+	return D3D11App::initAPI(D3D11, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, DXGI_FORMAT_D32_FLOAT, 1, NO_SETTING_CHANGE | SAMPLE_BACKBUFFER);
 }
 
 void App::exitAPI()
@@ -140,7 +139,7 @@ bool App::load()
     m_forwardQueue->AddShaderData(&m_lightShaderData);
     m_forwardQueue->AddShaderData(&m_shadowShaderData);
     m_forwardQueue->AddShaderData(&m_expWarpingData);
-    m_forwardQueue->SetClear(true, false, float4(0, 0, 0, 0), 1.0f);
+    m_forwardQueue->SetClear(true, true, float4(0, 0, 0, 0), 0.0f);
 
     const TextureID shadowRTs[] = { m_VarianceMap };
     m_shadowQueue.reset(new RenderQueue(gfxDevice, shadowRTs, array_size(shadowRTs), m_VarianceMapDepthRT));
