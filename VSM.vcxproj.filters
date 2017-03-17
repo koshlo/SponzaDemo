@@ -125,9 +125,6 @@
     <None Include="..\RenderFramework\Shaders\Material.data.fx">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\RenderFramework\Shaders\Scene.data.fx">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="GaussianBlur.data.fx" />
     <None Include="..\RenderFramework\Shaders\ForwardGeometry.fx">
       <Filter>Shaders</Filter>
@@ -151,6 +148,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\RenderFramework\Shaders\ExpWarping.inc.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\View.data.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\Lighting.data.fx">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

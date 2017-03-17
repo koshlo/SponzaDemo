@@ -156,11 +156,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\RenderFramework\Shaders\Scene.data.fx">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="GaussianBlur.data.fx">
       <FileType>Document</FileType>
     </None>
@@ -192,6 +187,14 @@
       <FileType>Document</FileType>
     </None>
     <None Include="..\RenderFramework\Shaders\Shadow.inc.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\RenderFramework\Shaders\Lighting.data.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\RenderFramework\Shaders\View.data.fx">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

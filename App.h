@@ -22,7 +22,8 @@
 #include "../RenderFramework/Direct3D11/D3D11App.h"
 #include "../RenderFramework/Util/BSP.h"
 #include "../RenderFramework/Util/SceneObject.h"
-#include "../RenderFramework/Shaders/Scene.data.fx"
+#include "../RenderFramework/Shaders/View.data.fx"
+#include "../RenderFramework/Shaders/Lighting.data.fx"
 #include "../RenderFramework/Shaders/Shadow.data.fx"
 #include "../RenderFramework/Shaders/ExpWarping.data.fx"
 
@@ -70,7 +71,8 @@ protected:
     SamplerStateID m_bilinearSampler;
     RenderState m_shadowState;
 
-	SceneShaderData m_sceneShaderData;
+	ViewShaderData m_viewShaderData;
+    LightShaderData m_lightShaderData;
     ShadowShaderData m_shadowShaderData;
     ExpWarpingShaderData m_expWarpingData;
 

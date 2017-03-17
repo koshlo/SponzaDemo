@@ -65,8 +65,8 @@ void App::onSize(const int w, const int h)
 {
 	D3D11App::onSize(w, h);
 	
-	const float near_plane = 0.1f;
-	const float far_plane = 1000.0f;
+	const float near_plane = 0.01f;
+	const float far_plane = 5000.0f;
 
 	m_projectionMatrix = toD3DProjection(perspectiveMatrixY(1.2f, w, h, far_plane, near_plane));
 	if (gfxDevice)
@@ -136,14 +136,15 @@ bool App::load()
 
     const TextureID forwardRTs[] = { FB_COLOR };
     m_forwardQueue.reset(new RenderQueue(gfxDevice, forwardRTs, array_size(forwardRTs), FB_DEPTH));
-    m_forwardQueue->AddShaderData(&m_sceneShaderData);
+    m_forwardQueue->AddShaderData(&m_viewShaderData);
+    m_forwardQueue->AddShaderData(&m_lightShaderData);
     m_forwardQueue->AddShaderData(&m_shadowShaderData);
     m_forwardQueue->AddShaderData(&m_expWarpingData);
     m_forwardQueue->SetClear(true, false, float4(0, 0, 0, 0), 1.0f);
 
     const TextureID shadowRTs[] = { m_VarianceMap };
     m_shadowQueue.reset(new RenderQueue(gfxDevice, shadowRTs, array_size(shadowRTs), m_VarianceMapDepthRT));
-    m_shadowQueue->AddShaderData(&m_shadowShaderData);
+    m_shadowQueue->AddShaderData(&m_viewShaderData);
     m_shadowQueue->AddShaderData(&m_expWarpingData);
     m_shadowQueue->SetClear(true, true, float4(0, 0, 0, 0), 0.0f);
 
@@ -236,7 +237,7 @@ mat4 App::renderDepthMapPass()
 	mat4 lightView(lightRotation, vec4(0, 0, 0, 1));
 	mat4 lightViewProj = lightProjection * lightView;
 
-    m_shadowShaderData.SetShadowMapProjection(lightViewProj);
+    m_viewShaderData.SetViewProjection(lightViewProj);
     m_expWarpingData.SetExpPower(ExponentialWarpPower);
 
     m_Scene.Draw(*m_shadowQueue, &m_shadowState, 0);
@@ -250,11 +251,11 @@ void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 	view.translate(-camPos);
 	float4x4 viewProj = m_projectionMatrix * view;
 
-	m_sceneShaderData.SetViewProjection(viewProj);
-	m_sceneShaderData.SetViewport(vec2(static_cast<float>(width), static_cast<float>(height)));
-	m_sceneShaderData.SetSunDirection(-SunDirection);
-	m_sceneShaderData.SetSunIntensity(SunIntensity);
-	m_sceneShaderData.SetAmbient(Ambient);
+	m_viewShaderData.SetViewProjection(viewProj);
+	m_viewShaderData.SetViewport(vec2(static_cast<float>(width), static_cast<float>(height)));
+	m_lightShaderData.SetSunDirection(-SunDirection);
+	m_lightShaderData.SetSunIntensity(SunIntensity);
+	m_lightShaderData.SetAmbient(Ambient);
 	
 	m_shadowShaderData.SetVarianceSampler(m_bilinearSampler);
 	m_shadowShaderData.SetShadowMap(varianceMap);
