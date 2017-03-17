@@ -156,6 +156,9 @@
     <None Include="..\RenderFramework\Shaders\Lighting.data.fx">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\RenderFramework\Shaders\BRDF.inc.fx">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
