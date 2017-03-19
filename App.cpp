@@ -217,8 +217,8 @@ void App::drawFrame()
 }
 
 const float3 SunDirection = normalize(float3(-0.4f, -1.0f, 0.3f));
-const float3 SunIntensity = float3(0.8f, 0.7f, 0.6f);
-const float3 Ambient = float3(0.2f, 0.2f, 0.4f);
+const float3 SunIntensity = float3(2.0f, 2.0f, 1.5f);
+const float3 Ambient = float3(0.2f, 0.2f, 0.3f);
 
 mat4 App::renderDepthMapPass()
 {
@@ -252,9 +252,11 @@ void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 
 	m_viewShaderData.SetViewProjection(viewProj);
 	m_viewShaderData.SetViewport(vec2(static_cast<float>(width), static_cast<float>(height)));
+    m_viewShaderData.SetEyePos(vec4(camPos, 1.0f));
 	m_lightShaderData.SetSunDirection(-SunDirection);
 	m_lightShaderData.SetSunIntensity(SunIntensity);
 	m_lightShaderData.SetAmbient(Ambient);
+    m_lightShaderData.SetMaterialSampler(m_bilinearSampler);
 	
 	m_shadowShaderData.SetVarianceSampler(m_bilinearSampler);
 	m_shadowShaderData.SetShadowMap(varianceMap);
