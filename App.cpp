@@ -124,6 +124,10 @@ bool App::load()
 	if ((m_pointClamp = gfxDevice->addSamplerState(NEAREST, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
 	if ((m_bilinearSampler = gfxDevice->addSamplerState(BILINEAR, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
 
+    SamplerStateID materialSampler = gfxDevice->addSamplerState(BILINEAR, WRAP, WRAP, WRAP);
+    ASSERT(materialSampler != -1);
+    m_lightShaderData.SetMaterialSampler(materialSampler);
+
     // Main render targets
 	FORMAT shadowMapFormat = FORMAT_RG32F;
     if ((m_VarianceMap = gfxDevice->addRenderTarget (ShadowMapResolution, ShadowMapResolution, shadowMapFormat, SS_NONE, 0)) == TEXTURE_NONE) return false;
@@ -139,7 +143,7 @@ bool App::load()
     m_forwardQueue->AddShaderData(&m_lightShaderData);
     m_forwardQueue->AddShaderData(&m_shadowShaderData);
     m_forwardQueue->AddShaderData(&m_expWarpingData);
-    m_forwardQueue->SetClear(true, true, float4(0, 0, 0, 0), 0.0f);
+    m_forwardQueue->SetClear(true, true, float4(0.2f, 0.2f, 1.0f, 0), 0.0f);
 
     const TextureID shadowRTs[] = { m_VarianceMap };
     m_shadowQueue.reset(new RenderQueue(gfxDevice, shadowRTs, array_size(shadowRTs), m_VarianceMapDepthRT));
@@ -256,7 +260,6 @@ void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 	m_lightShaderData.SetSunDirection(-SunDirection);
 	m_lightShaderData.SetSunIntensity(SunIntensity);
 	m_lightShaderData.SetAmbient(Ambient);
-    m_lightShaderData.SetMaterialSampler(m_bilinearSampler);
 	
 	m_shadowShaderData.SetVarianceSampler(m_bilinearSampler);
 	m_shadowShaderData.SetShadowMap(varianceMap);
