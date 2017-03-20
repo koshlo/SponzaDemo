@@ -107,7 +107,7 @@ void App::exitAPI()
 	D3D11App::exitAPI();
 }
 
-const int ShadowMapResolution = 512;
+const int ShadowMapResolution = 1024;
 
 bool App::load()
 {
@@ -120,6 +120,7 @@ bool App::load()
 	// Shaders
 	if ((m_renderVarianceMap = gfxDevice->addShader("../RenderFramework/Shaders/RenderDepthMoments.fx")) == SHADER_NONE) return false;
     if ((m_gausBlurCompute = gfxDevice->addComputeShader("../RenderFramework/Shaders/GaussianBlur.fx")) == SHADER_NONE) return false;
+    if ((m_tonemap = gfxDevice->addShader("../RenderFramework/Shaders/BlitTonemap.fx")) == SHADER_NONE) return false;
 
 	if ((m_pointClamp = gfxDevice->addSamplerState(NEAREST, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
 	if ((m_bilinearSampler = gfxDevice->addSamplerState(BILINEAR, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
@@ -137,7 +138,9 @@ bool App::load()
 	if ((m_DepthRT = gfxDevice->addRenderDepth(width, height, 1, FORMAT_D16, 1, SS_NONE, 0)) == TEXTURE_NONE) return false;
     if ((m_VarianceMapDepthRT = gfxDevice->addRenderDepth(ShadowMapResolution, ShadowMapResolution, 1, FORMAT_D16, 1)) == TEXTURE_NONE) return false;
 
-    const TextureID forwardRTs[] = { FB_COLOR };
+    TextureID hdrColor = gfxDevice->addRenderTarget(width, height, FORMAT_RGBA16F);
+
+    const TextureID forwardRTs[] = { hdrColor };
     m_forwardQueue.reset(new RenderQueue(gfxDevice, forwardRTs, array_size(forwardRTs), FB_DEPTH));
     m_forwardQueue->AddShaderData(&m_viewShaderData);
     m_forwardQueue->AddShaderData(&m_lightShaderData);
@@ -218,10 +221,11 @@ void App::drawFrame()
 		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
 	renderForwardPass(lightViewProj, blurredVariance);
     m_forwardQueue->SubmitAll(gfxDevice, stateHelper);
+    RenderQueue::Blit(stateHelper, renderStateCache, m_tonemap, m_forwardQueue->GetRenderTarget(0), FB_COLOR);
 }
 
 const float3 SunDirection = normalize(float3(-0.4f, -1.0f, 0.3f));
-const float3 SunIntensity = float3(2.0f, 2.0f, 1.5f);
+const float3 SunIntensity = float3(20.0f, 20.0f, 18.0f);
 const float3 Ambient = float3(0.2f, 0.2f, 0.3f);
 
 mat4 App::renderDepthMapPass()

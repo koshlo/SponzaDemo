@@ -66,6 +66,7 @@ protected:
 	TextureID m_BaseRT, m_NormalRT, m_DepthRT, m_VarianceMap, m_VarianceMapDepthRT;
 	ShaderID m_renderVarianceMap, m_forwardGeometry, m_deferredLighting;
     ShaderID m_gausBlurCompute;
+    ShaderID m_tonemap;
     TextureID m_blurredVarianceTargets[2];
 	SamplerStateID m_pointClamp;
     SamplerStateID m_bilinearSampler;

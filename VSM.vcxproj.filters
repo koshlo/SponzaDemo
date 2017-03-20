@@ -162,6 +162,15 @@
     <None Include="..\RenderFramework\Shaders\Lighting.inc.fx">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\RenderFramework\Shaders\Blit.data.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\BlitVertex.inc.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\BlitTonemap.fx">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
