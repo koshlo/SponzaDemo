@@ -225,7 +225,7 @@ void App::drawFrame()
 }
 
 const float3 SunDirection = normalize(float3(-0.4f, -1.0f, 0.3f));
-const float3 SunIntensity = float3(20.0f, 20.0f, 18.0f);
+const float3 SunIntensity = float3(40.0f, 40.0f, 35.0f);
 const float3 Ambient = float3(0.2f, 0.2f, 0.3f);
 
 mat4 App::renderDepthMapPass()
