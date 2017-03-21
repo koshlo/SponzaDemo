@@ -32,6 +32,45 @@
  
 BaseApp *app = new App();
 
+const float ExponentialWarpPower = 5.0f;
+const float3 SunDirection = normalize(float3(-0.4f, -1.0f, 0.3f));
+const float3 SunIntensity = float3(40.0f, 40.0f, 35.0f);
+const float3 Ambient = float3(0.2f, 0.2f, 0.3f);
+const float Exposure = 0.05f;
+
+struct GUIElements
+{
+    static const int DialogW = 400;
+    static const int DialogH = 400;
+
+    Dialog* paramDialog;
+    VectorSlider* sunLightSlider;
+    Label* sunLightLabel;
+    VectorSlider* sunDirSlider;
+    Label* sunDirLabel;
+    Slider* exposureSlider;
+    Label* exposureLabel;
+    int lightingTab;
+
+    GUIElements(int screenW, int screenH) :
+        paramDialog(new Dialog(screenW - DialogW - 10, 10, DialogW, DialogH, false, true)),
+        sunLightSlider(new VectorSlider(10, 10, 200, 20, 0.0f, 100.0f, SunIntensity)),
+        sunLightLabel(new Label(210, 10, 150, 20, "")),
+        sunDirSlider(new VectorSlider(10, 50, 200, 20, -1.0f, 1.0f, SunDirection)),
+        sunDirLabel(new Label(210, 50, 150, 20, "")),
+        exposureSlider(new Slider(10, 90, 200, 20, 0.0f, 1.0f, Exposure)),
+        exposureLabel(new Label(210, 90, 100, 20, ""))
+    {
+        lightingTab = paramDialog->addTab("Lighting");
+        paramDialog->addWidget(lightingTab, sunLightSlider);
+        paramDialog->addWidget(lightingTab, sunLightLabel);
+        paramDialog->addWidget(lightingTab, sunDirSlider);
+        paramDialog->addWidget(lightingTab, sunDirLabel);
+        paramDialog->addWidget(lightingTab, exposureSlider);
+        paramDialog->addWidget(lightingTab, exposureLabel);
+    }
+};
+
 bool App::onKey(const uint key, const bool pressed)
 {
 	if (D3D11App::onKey(key, pressed))
@@ -85,11 +124,8 @@ bool App::init()
 	depthBits = 0;
 	speed = 100;
 
-	float dialogW = 400, dialogH = 200;
-	m_paramDialog = new Dialog(width-dialogW, 0, dialogW, dialogH, false, false);
-	int tab = m_paramDialog->addTab("Test");
-	m_paramDialog->addWidget(tab, new VectorSlider(10, 0, 200, 20, 0, 1, 0));
-	widgets.addFirst(m_paramDialog);
+    m_gui = new GUIElements(width, height);
+	widgets.addFirst(m_gui->paramDialog);
 
 	return true;
 }
@@ -165,8 +201,6 @@ void App::unload()
 {
 }
 
-const float ExponentialWarpPower = 5.0f;
-
 TextureID makeBlurPass(StateHelper* stateHelper, ShaderID shader, TextureID srcTexture, TextureID* destTextures, float2 texSize)
 {
 	const float sigma = 3.0f;
@@ -215,6 +249,8 @@ TextureID makeBlurPass(StateHelper* stateHelper, ShaderID shader, TextureID srcT
 
 void App::drawFrame()
 {
+    updateGUI();
+
 	mat4 lightViewProj = renderDepthMapPass();
     m_shadowQueue->SubmitAll(gfxDevice, stateHelper);
 	float shadowMapRes = ShadowMapResolution;
@@ -224,10 +260,6 @@ void App::drawFrame()
     m_forwardQueue->SubmitAll(gfxDevice, stateHelper);
     RenderQueue::Blit(stateHelper, renderStateCache, m_tonemap, m_forwardQueue->GetRenderTarget(0), FB_COLOR);
 }
-
-const float3 SunDirection = normalize(float3(-0.4f, -1.0f, 0.3f));
-const float3 SunIntensity = float3(40.0f, 40.0f, 35.0f);
-const float3 Ambient = float3(0.2f, 0.2f, 0.3f);
 
 mat4 App::renderDepthMapPass()
 {
@@ -273,5 +305,13 @@ void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
     m_expWarpingData.SetExpPower(ExponentialWarpPower);
 
     m_Scene.Draw(*m_forwardQueue, 0);
+}
+
+void App::updateGUI()
+{
+    String lightIntensity;
+    float3 fIntensity = m_gui->sunLightSlider->getValue();
+    lightIntensity.sprintf("Intensity: (%.1f %.1f %.1f)", fIntensity.x, fIntensity.y, fIntensity.z);
+    m_gui->sunLightLabel->setText(lightIntensity);
 }
 

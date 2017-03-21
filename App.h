@@ -35,6 +35,8 @@ struct Light
 	float  Radius;
 };
 
+struct GUIElements;
+
 class App : public D3D11App
 {
 public:
@@ -61,6 +63,7 @@ public:
 protected:
 	mat4 renderDepthMapPass();
 	void renderForwardPass(const mat4& lightViewProjection, TextureID varianceMap);
+    void updateGUI();
 
 	mat4 m_projectionMatrix;
 	TextureID m_BaseRT, m_NormalRT, m_DepthRT, m_VarianceMap, m_VarianceMapDepthRT;
@@ -78,10 +81,8 @@ protected:
     ExpWarpingShaderData m_expWarpingData;
 
 	SceneObject m_Scene;
-	Model m_Sphere;
-
-	Dialog* m_paramDialog;
 
     std::unique_ptr<RenderQueue> m_forwardQueue;
     std::unique_ptr<RenderQueue> m_shadowQueue;
+    GUIElements* m_gui;
 };
