@@ -32,6 +32,7 @@
     <ClCompile Include="..\RenderFramework\GUI\DropDownList.cpp" />
     <ClCompile Include="..\RenderFramework\GUI\Label.cpp" />
     <ClCompile Include="..\RenderFramework\GUI\Slider.cpp" />
+    <ClCompile Include="..\RenderFramework\GUI\VectorSlider.cpp" />
     <ClCompile Include="..\RenderFramework\GUI\Widget.cpp" />
     <ClCompile Include="..\RenderFramework\Imaging\Image.cpp" />
     <ClCompile Include="..\RenderFramework\Math\Frustum.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="..\RenderFramework\GUI\DropDownList.h" />
     <ClInclude Include="..\RenderFramework\GUI\Label.h" />
     <ClInclude Include="..\RenderFramework\GUI\Slider.h" />
+    <ClInclude Include="..\RenderFramework\GUI\VectorSlider.h" />
     <ClInclude Include="..\RenderFramework\GUI\Widget.h" />
     <ClInclude Include="..\RenderFramework\Imaging\Image.h" />
     <ClInclude Include="..\RenderFramework\Imaging\jconfig.h" />
@@ -317,6 +319,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PreprocessToFile>false</PreprocessToFile>
+      <OmitFramePointers>false</OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

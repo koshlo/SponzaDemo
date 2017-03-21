@@ -28,7 +28,8 @@
 #include "../RenderFramework/Util/SceneObject.h"
 #include "../RenderFramework/Util/Helpers.h"
 #include "../RenderFramework/Shaders/GaussianBlur.data.fx"
-
+#include "../RenderFramework/GUI/VectorSlider.h"
+ 
 BaseApp *app = new App();
 
 bool App::onKey(const uint key, const bool pressed)
@@ -87,7 +88,7 @@ bool App::init()
 	float dialogW = 400, dialogH = 200;
 	m_paramDialog = new Dialog(width-dialogW, 0, dialogW, dialogH, false, false);
 	int tab = m_paramDialog->addTab("Test");
-	m_paramDialog->addWidget(tab, new Slider(10, 0, 100, 20, 0, 1, 0));
+	m_paramDialog->addWidget(tab, new VectorSlider(10, 0, 200, 20, 0, 1, 0));
 	widgets.addFirst(m_paramDialog);
 
 	return true;
@@ -236,10 +237,10 @@ mat4 App::renderDepthMapPass()
 
 	mat3 lightRotation = lookAtRotation(vec3(0, 0, 0), SunDirection, vec3(0, 1, 0));
 	AABB lightBB = RotateAABB(boundingBox, lightRotation);
-	const float nearFarBias = 2.5f;
+	const float farBias = 1000.0f; // TODO fix projection computation
 	mat4 lightProjection = toD3DProjection(orthoMatrixX(lightBB.GetLeft(), lightBB.GetRight(),
 		lightBB.GetTop(), lightBB.GetBottom(),
-		lightBB.GetFront() - nearFarBias, lightBB.GetBack() + nearFarBias));
+		lightBB.GetFront(), lightBB.GetBack() + farBias));
 
 	mat4 lightView(lightRotation, vec4(0, 0, 0, 1));
 	mat4 lightViewProj = lightProjection * lightView;

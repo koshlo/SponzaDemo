@@ -46,6 +46,7 @@
     <ClCompile Include="..\RenderFramework\Util\AABB.cpp" />
     <ClCompile Include="..\RenderFramework\Shaders\ShaderCache.cpp" />
     <ClCompile Include="..\RenderFramework\RenderState.cpp" />
+    <ClCompile Include="..\RenderFramework\GUI\VectorSlider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -120,6 +121,7 @@
     <ClInclude Include="..\RenderFramework\ShaderDataGen.def" />
     <ClInclude Include="..\RenderFramework\Shaders\ShaderCache.h" />
     <ClInclude Include="..\RenderFramework\Util\Helpers.h" />
+    <ClInclude Include="..\RenderFramework\GUI\VectorSlider.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\RenderFramework\Shaders\Material.data.fx">
