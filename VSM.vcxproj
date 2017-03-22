@@ -35,6 +35,7 @@
     <ClCompile Include="..\RenderFramework\GUI\VectorSlider.cpp" />
     <ClCompile Include="..\RenderFramework\GUI\Widget.cpp" />
     <ClCompile Include="..\RenderFramework\Imaging\Image.cpp" />
+    <ClCompile Include="..\RenderFramework\IrradianceRenderer.cpp" />
     <ClCompile Include="..\RenderFramework\Math\Frustum.cpp" />
     <ClCompile Include="..\RenderFramework\Math\MathTools.cpp" />
     <ClCompile Include="..\RenderFramework\Math\Noise.cpp" />
@@ -103,6 +104,7 @@
     <ClInclude Include="..\RenderFramework\Imaging\pngconf.h" />
     <ClInclude Include="..\RenderFramework\Imaging\zconf.h" />
     <ClInclude Include="..\RenderFramework\Imaging\zlib.h" />
+    <ClInclude Include="..\RenderFramework\IrradianceRenderer.h" />
     <ClInclude Include="..\RenderFramework\Math\Frustum.h" />
     <ClInclude Include="..\RenderFramework\Math\MathTools.h" />
     <ClInclude Include="..\RenderFramework\Math\MyMath.h" />

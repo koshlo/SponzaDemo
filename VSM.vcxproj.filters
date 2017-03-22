@@ -47,6 +47,7 @@
     <ClCompile Include="..\RenderFramework\Shaders\ShaderCache.cpp" />
     <ClCompile Include="..\RenderFramework\RenderState.cpp" />
     <ClCompile Include="..\RenderFramework\GUI\VectorSlider.cpp" />
+    <ClCompile Include="..\RenderFramework\IrradianceRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -122,6 +123,7 @@
     <ClInclude Include="..\RenderFramework\Shaders\ShaderCache.h" />
     <ClInclude Include="..\RenderFramework\Util\Helpers.h" />
     <ClInclude Include="..\RenderFramework\GUI\VectorSlider.h" />
+    <ClInclude Include="..\RenderFramework\IrradianceRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\RenderFramework\Shaders\Material.data.fx">
