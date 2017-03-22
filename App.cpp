@@ -51,7 +51,7 @@ struct GUIElements
     Label* sunDirLabel;
     Slider* exposureSlider;
     Label* exposureLabel;
-    int lightingTab;
+    Label* cameraPosLabel;
 
     GUIElements(int screenW, int screenH) :
         paramDialog(new Dialog(screenW - DialogW - 10, 10, DialogW, DialogH, false, true)),
@@ -60,15 +60,18 @@ struct GUIElements
         sunDirSlider(new VectorSlider(10, 70, 400, 20, -1.0f, 1.0f, SunDirection)),
         sunDirLabel(new Label(10, 90, 400, 30, "")),
         exposureSlider(new Slider(10, 140, 250, 20, 0.0f, 1.0f, Exposure)),
-        exposureLabel(new Label(265, 135, 150, 30, ""))
+        exposureLabel(new Label(265, 135, 150, 30, "")),
+        cameraPosLabel(new Label(10, 10, 350, 30, ""))
     {
-        lightingTab = paramDialog->addTab("Lighting");
+        int lightingTab = paramDialog->addTab("Lighting");
+        int sceneTab = paramDialog->addTab("Scene");
         paramDialog->addWidget(lightingTab, sunLightSlider);
         paramDialog->addWidget(lightingTab, sunLightLabel);
         paramDialog->addWidget(lightingTab, sunDirSlider);
         paramDialog->addWidget(lightingTab, sunDirLabel);
         paramDialog->addWidget(lightingTab, exposureSlider);
         paramDialog->addWidget(lightingTab, exposureLabel);
+        paramDialog->addWidget(sceneTab, cameraPosLabel);
     }
 };
 
@@ -329,5 +332,8 @@ void App::updateGUI()
     float fExposure = m_gui->exposureSlider->getValue();
     ::sprintf(fmtBuffer, "Exposure: %.3f", fExposure);
     m_gui->exposureLabel->setText(fmtBuffer);
+
+    ::sprintf(fmtBuffer, "Camera position: %.1f %.1f %1.f", camPos.x, camPos.y, camPos.z);
+    m_gui->cameraPosLabel->setText(fmtBuffer);
 }
 
