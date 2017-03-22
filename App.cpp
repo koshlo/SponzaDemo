@@ -28,6 +28,7 @@
 #include "../RenderFramework/Util/SceneObject.h"
 #include "../RenderFramework/Util/Helpers.h"
 #include "../RenderFramework/Shaders/GaussianBlur.data.fx"
+#include "../RenderFramework/Shaders/Tonemap.data.fx"
 #include "../RenderFramework/GUI/VectorSlider.h"
  
 BaseApp *app = new App();
@@ -40,8 +41,8 @@ const float Exposure = 0.05f;
 
 struct GUIElements
 {
-    static const int DialogW = 400;
-    static const int DialogH = 400;
+    static const float DialogW;
+    static const float DialogH;
 
     Dialog* paramDialog;
     VectorSlider* sunLightSlider;
@@ -54,12 +55,12 @@ struct GUIElements
 
     GUIElements(int screenW, int screenH) :
         paramDialog(new Dialog(screenW - DialogW - 10, 10, DialogW, DialogH, false, true)),
-        sunLightSlider(new VectorSlider(10, 10, 200, 20, 0.0f, 100.0f, SunIntensity)),
-        sunLightLabel(new Label(210, 10, 150, 20, "")),
-        sunDirSlider(new VectorSlider(10, 50, 200, 20, -1.0f, 1.0f, SunDirection)),
-        sunDirLabel(new Label(210, 50, 150, 20, "")),
-        exposureSlider(new Slider(10, 90, 200, 20, 0.0f, 1.0f, Exposure)),
-        exposureLabel(new Label(210, 90, 100, 20, ""))
+        sunLightSlider(new VectorSlider(10, 10, 400, 20, 0.0f, 100.0f, SunIntensity)),
+        sunLightLabel(new Label(10, 30, 300, 30, "")),
+        sunDirSlider(new VectorSlider(10, 70, 400, 20, -1.0f, 1.0f, SunDirection)),
+        sunDirLabel(new Label(10, 90, 400, 30, "")),
+        exposureSlider(new Slider(10, 140, 250, 20, 0.0f, 1.0f, Exposure)),
+        exposureLabel(new Label(265, 135, 150, 30, ""))
     {
         lightingTab = paramDialog->addTab("Lighting");
         paramDialog->addWidget(lightingTab, sunLightSlider);
@@ -70,6 +71,9 @@ struct GUIElements
         paramDialog->addWidget(lightingTab, exposureLabel);
     }
 };
+
+const float GUIElements::DialogW = 450.0f;
+const float GUIElements::DialogH = 400.0f;
 
 bool App::onKey(const uint key, const bool pressed)
 {
@@ -258,7 +262,11 @@ void App::drawFrame()
 		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
 	renderForwardPass(lightViewProj, blurredVariance);
     m_forwardQueue->SubmitAll(gfxDevice, stateHelper);
-    RenderQueue::Blit(stateHelper, renderStateCache, m_tonemap, m_forwardQueue->GetRenderTarget(0), FB_COLOR);
+
+    TonemapShaderData tonemapData;
+    tonemapData.SetExposure(m_gui->exposureSlider->getValue());
+    const ShaderData* blitData[] = { &tonemapData };
+    RenderQueue::Blit(stateHelper, m_tonemap, blitData, array_size(blitData), m_forwardQueue->GetRenderTarget(0), m_pointClamp, FB_COLOR);
 }
 
 mat4 App::renderDepthMapPass()
@@ -267,7 +275,7 @@ mat4 App::renderDepthMapPass()
 
 	AABB::PointArray bbPoints = boundingBox.GetPoints();
 
-	mat3 lightRotation = lookAtRotation(vec3(0, 0, 0), SunDirection, vec3(0, 1, 0));
+	mat3 lightRotation = lookAtRotation(vec3(0, 0, 0), m_gui->sunDirSlider->getValue(), vec3(0, 1, 0));
 	AABB lightBB = RotateAABB(boundingBox, lightRotation);
 	const float farBias = 1000.0f; // TODO fix projection computation
 	mat4 lightProjection = toD3DProjection(orthoMatrixX(lightBB.GetLeft(), lightBB.GetRight(),
@@ -294,8 +302,8 @@ void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 	m_viewShaderData.SetViewProjection(viewProj);
 	m_viewShaderData.SetViewport(vec2(static_cast<float>(width), static_cast<float>(height)));
     m_viewShaderData.SetEyePos(vec4(camPos, 1.0f));
-	m_lightShaderData.SetSunDirection(-SunDirection);
-	m_lightShaderData.SetSunIntensity(SunIntensity);
+	m_lightShaderData.SetSunDirection(-m_gui->sunDirSlider->getValue());
+	m_lightShaderData.SetSunIntensity(m_gui->sunLightSlider->getValue());
 	m_lightShaderData.SetAmbient(Ambient);
 	
 	m_shadowShaderData.SetVarianceSampler(m_bilinearSampler);
@@ -309,9 +317,17 @@ void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 
 void App::updateGUI()
 {
-    String lightIntensity;
+    char fmtBuffer[256];
     float3 fIntensity = m_gui->sunLightSlider->getValue();
-    lightIntensity.sprintf("Intensity: (%.1f %.1f %.1f)", fIntensity.x, fIntensity.y, fIntensity.z);
-    m_gui->sunLightLabel->setText(lightIntensity);
+    ::sprintf(fmtBuffer, "Sun intensity: (%.1f %.1f %.1f)", fIntensity.x, fIntensity.y, fIntensity.z);
+    m_gui->sunLightLabel->setText(fmtBuffer);
+
+    float3 fDir = m_gui->sunDirSlider->getValue();
+    ::sprintf(fmtBuffer, "Sun direction: (%.2f %.2f %.2f", fDir.x, fDir.y, fDir.z);
+    m_gui->sunDirLabel->setText(fmtBuffer);
+
+    float fExposure = m_gui->exposureSlider->getValue();
+    ::sprintf(fmtBuffer, "Exposure: %.3f", fExposure);
+    m_gui->exposureLabel->setText(fmtBuffer);
 }
 
