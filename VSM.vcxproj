@@ -232,6 +232,14 @@
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\RenderFramework\Shaders\ProbeDebug.data.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\RenderFramework\Shaders\ProbeDebug.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{414E9ECC-66EC-4205-9144-06CC2AA7D243}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

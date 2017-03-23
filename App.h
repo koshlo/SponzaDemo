@@ -23,9 +23,6 @@
 #include "../RenderFramework/Util/BSP.h"
 #include "../RenderFramework/Util/SceneObject.h"
 #include "../RenderFramework/Shaders/View.data.fx"
-#include "../RenderFramework/Shaders/Lighting.data.fx"
-#include "../RenderFramework/Shaders/Shadow.data.fx"
-#include "../RenderFramework/Shaders/ExpWarping.data.fx"
 
 #include <memory>
 
@@ -36,6 +33,7 @@ struct Light
 };
 
 struct GUIElements;
+class IrradianceRenderer;
 
 class App : public D3D11App
 {
@@ -85,4 +83,6 @@ protected:
     std::unique_ptr<RenderQueue> m_forwardQueue;
     std::unique_ptr<RenderQueue> m_shadowQueue;
     GUIElements* m_gui;
+
+    std::unique_ptr<IrradianceRenderer> m_irradianceRenderer;
 };

@@ -30,6 +30,7 @@
 #include "../RenderFramework/Shaders/GaussianBlur.data.fx"
 #include "../RenderFramework/Shaders/Tonemap.data.fx"
 #include "../RenderFramework/GUI/VectorSlider.h"
+#include "../RenderFramework/IrradianceRenderer.h"
  
 BaseApp *app = new App();
 
@@ -161,6 +162,8 @@ bool App::load()
 	RenderResourceLoader loader(*gfxDevice);
 	if (!m_Scene.Load(modelPath.dataPtr(), loader, *shaderCache, *renderStateCache)) return false;
 
+    m_irradianceRenderer.reset(new IrradianceRenderer(gfxDevice, renderStateCache, stateHelper));
+
 	// Shaders
 	if ((m_renderVarianceMap = gfxDevice->addShader("../RenderFramework/Shaders/RenderDepthMoments.fx")) == SHADER_NONE) return false;
     if ((m_gausBlurCompute = gfxDevice->addComputeShader("../RenderFramework/Shaders/GaussianBlur.fx")) == SHADER_NONE) return false;
@@ -264,6 +267,18 @@ void App::drawFrame()
 	TextureID blurredVariance =
 		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
 	renderForwardPass(lightViewProj, blurredVariance);
+    //m_forwardQueue->SubmitAll(gfxDevice, stateHelper);
+
+    Scene scene;
+    scene.objects = &m_Scene;
+    scene.numObjects = 1;
+    scene.lightShaderData = &m_lightShaderData;
+    scene.shadowShaderData = &m_shadowShaderData;
+    scene.expWarpingData = &m_expWarpingData;
+
+    vec3 probPos[] = { vec3{-342, 118, 126} };
+    m_irradianceRenderer->BakeProbes(probPos, array_size(probPos), 256, scene);
+    m_irradianceRenderer->DrawDebugSpheres(*m_forwardQueue);
     m_forwardQueue->SubmitAll(gfxDevice, stateHelper);
 
     TonemapShaderData tonemapData;

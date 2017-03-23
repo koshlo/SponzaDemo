@@ -178,6 +178,12 @@
     <None Include="..\RenderFramework\Shaders\Tonemap.data.fx">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\RenderFramework\Shaders\ProbeDebug.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\ProbeDebug.data.fx">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
