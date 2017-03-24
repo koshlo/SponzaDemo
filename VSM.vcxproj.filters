@@ -184,6 +184,12 @@
     <None Include="..\RenderFramework\Shaders\ProbeDebug.data.fx">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\RenderFramework\Shaders\ConvolveEnvMap.fx">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\RenderFramework\Shaders\ConvolveEnvMap.data.fx">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
