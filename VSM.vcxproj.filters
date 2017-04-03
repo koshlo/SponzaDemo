@@ -199,4 +199,9 @@
   <ItemGroup>
     <ResourceCompile Include="..\RenderFramework\Windows\Resources.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\RenderFramework\Shaders\MonteCarlo.inc.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>

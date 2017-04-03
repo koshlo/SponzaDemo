@@ -267,7 +267,6 @@ void App::drawFrame()
 	TextureID blurredVariance =
 		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
 	renderForwardPass(lightViewProj, blurredVariance);
-    //m_forwardQueue->SubmitAll(gfxDevice, stateHelper);
 
     Scene scene;
     scene.objects = &m_Scene;
