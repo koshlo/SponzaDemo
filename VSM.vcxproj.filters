@@ -190,6 +190,9 @@
     <None Include="..\RenderFramework\Shaders\ConvolveEnvMap.data.fx">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\RenderFramework\Shaders\MonteCarlo.inc.fx">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
@@ -198,10 +201,5 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\RenderFramework\Windows\Resources.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\RenderFramework\Shaders\MonteCarlo.inc.fx">
-      <Filter>Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>
