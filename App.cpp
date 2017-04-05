@@ -30,6 +30,7 @@
 #include "../RenderFramework/Shaders/GaussianBlur.data.fx"
 #include "../RenderFramework/Shaders/Tonemap.data.fx"
 #include "../RenderFramework/GUI/VectorSlider.h"
+#include "../RenderFramework/GUI/Button.h"
 #include "../RenderFramework/IrradianceRenderer.h"
  
 BaseApp *app = new App();
@@ -39,6 +40,24 @@ const float3 SunDirection = normalize(float3(-0.4f, -1.0f, 0.3f));
 const float3 SunIntensity = float3(40.0f, 40.0f, 35.0f);
 const float3 Ambient = float3(0.2f, 0.2f, 0.3f);
 const float Exposure = 0.05f;
+
+class ProbeButtonListener : public PushButtonListener
+{
+public:
+    void reset()
+    {
+        _pendingPress = false;
+    }
+
+    void onButtonClicked(PushButton *button) override
+    {
+        _pendingPress = true;
+    }
+
+    bool isPressedThisFrame() const { return _pendingPress; }
+private:
+    bool _pendingPress;
+};
 
 struct GUIElements
 {
@@ -53,6 +72,8 @@ struct GUIElements
     Slider* exposureSlider;
     Label* exposureLabel;
     Label* cameraPosLabel;
+    PushButton* probeButton;
+    ProbeButtonListener probeButtonListener;
 
     GUIElements(int screenW, int screenH) :
         paramDialog(new Dialog(screenW - DialogW - 10, 10, DialogW, DialogH, false, true)),
@@ -62,7 +83,8 @@ struct GUIElements
         sunDirLabel(new Label(10, 90, 400, 30, "")),
         exposureSlider(new Slider(10, 140, 250, 20, 0.0f, 1.0f, Exposure)),
         exposureLabel(new Label(265, 135, 150, 30, "")),
-        cameraPosLabel(new Label(10, 10, 350, 30, ""))
+        cameraPosLabel(new Label(10, 10, 350, 30, "")),
+        probeButton(new PushButton(10, 180, 200, 40, "Recompute probes"))
     {
         int lightingTab = paramDialog->addTab("Lighting");
         int sceneTab = paramDialog->addTab("Scene");
@@ -72,7 +94,11 @@ struct GUIElements
         paramDialog->addWidget(lightingTab, sunDirLabel);
         paramDialog->addWidget(lightingTab, exposureSlider);
         paramDialog->addWidget(lightingTab, exposureLabel);
+        paramDialog->addWidget(lightingTab, probeButton);
+
         paramDialog->addWidget(sceneTab, cameraPosLabel);
+
+        probeButton->setListener(&probeButtonListener);
     }
 };
 
@@ -268,16 +294,22 @@ void App::drawFrame()
 		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
 	renderForwardPass(lightViewProj, blurredVariance);
 
-    Scene scene;
-    scene.objects = &m_Scene;
-    scene.numObjects = 1;
-    scene.lightShaderData = &m_lightShaderData;
-    scene.shadowShaderData = &m_shadowShaderData;
-    scene.expWarpingData = &m_expWarpingData;
+    if (m_gui->probeButtonListener.isPressedThisFrame())
+    {
+        Scene scene;
+        scene.objects = &m_Scene;
+        scene.numObjects = 1;
+        scene.lightShaderData = &m_lightShaderData;
+        scene.shadowShaderData = &m_shadowShaderData;
+        scene.expWarpingData = &m_expWarpingData;
 
-    vec3 probPos[] = { vec3{-342, 118, 126} };
-    m_irradianceRenderer->BakeProbes(probPos, array_size(probPos), 256, scene);
+        vec3 probPos[] = { vec3{ -342, 118, 126 } };
+        m_irradianceRenderer->BakeProbes(probPos, array_size(probPos), 256, scene);
+
+        m_gui->probeButtonListener.reset();
+    }   
     m_irradianceRenderer->DrawDebugSpheres(*m_forwardQueue);
+
     m_forwardQueue->SubmitAll(gfxDevice, stateHelper);
 
     TonemapShaderData tonemapData;
