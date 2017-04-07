@@ -44,6 +44,8 @@ const float Exposure = 0.05f;
 class ProbeButtonListener : public PushButtonListener
 {
 public:
+    ProbeButtonListener() : _pendingPress(true) {}
+
     void reset()
     {
         _pendingPress = false;
@@ -283,16 +285,31 @@ TextureID makeBlurPass(StateHelper* stateHelper, ShaderID shader, TextureID srcT
 	return destTextures[1];
 }
 
+vec3 probeLocations[] = 
+{
+    vec3{ -342, 118, 126 }, vec3{ -20, 113, 121 }
+};
+
+void setupIrradianceData(RenderStateCache* stateCache, TextureID irradianceMap, LightShaderData* lightShaderData)
+{
+    SamplerStateDesc linearSamplerDesc{ LINEAR, CLAMP, CLAMP, CLAMP };
+    SamplerStateID irradianceSampler = stateCache->GetSamplerState(linearSamplerDesc);
+    lightShaderData->SetIrradianceSampler(irradianceSampler);
+    lightShaderData->SetIrradianceProbes(irradianceMap);
+
+    static const uint ProbeCount = array_size(probeLocations);
+    vec4 probeLocations4[ProbeCount];
+    for (uint i = 0; i < ProbeCount; ++i)
+    {
+        probeLocations4[i] = vec4(probeLocations[i], 1.0f);
+    }
+    lightShaderData->SetProbeCount(ProbeCount);
+    lightShaderData->SetProbeLocations(probeLocations4, ProbeCount);
+}
+
 void App::drawFrame()
 {
     updateGUI();
-
-	mat4 lightViewProj = renderDepthMapPass();
-    m_shadowQueue->SubmitAll(gfxDevice, stateHelper);
-	float shadowMapRes = ShadowMapResolution;
-	TextureID blurredVariance =
-		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
-	renderForwardPass(lightViewProj, blurredVariance);
 
     if (m_gui->probeButtonListener.isPressedThisFrame())
     {
@@ -303,12 +320,20 @@ void App::drawFrame()
         scene.shadowShaderData = &m_shadowShaderData;
         scene.expWarpingData = &m_expWarpingData;
 
-        vec3 probPos[] = { vec3{ -342, 118, 126 } };
-        m_irradianceRenderer->BakeProbes(probPos, array_size(probPos), 256, scene);
+        m_irradianceMapArray = m_irradianceRenderer->BakeProbes(probeLocations, array_size(probeLocations), 256, scene);
 
         m_gui->probeButtonListener.reset();
-    }   
+    }
     m_irradianceRenderer->DrawDebugSpheres(*m_forwardQueue);
+
+    setupIrradianceData(renderStateCache, m_irradianceMapArray, &m_lightShaderData);
+
+	mat4 lightViewProj = renderDepthMapPass();
+    m_shadowQueue->SubmitAll(gfxDevice, stateHelper);
+	float shadowMapRes = ShadowMapResolution;
+	TextureID blurredVariance =
+		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
+	renderForwardPass(lightViewProj, blurredVariance);
 
     m_forwardQueue->SubmitAll(gfxDevice, stateHelper);
 
@@ -353,7 +378,6 @@ void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
     m_viewShaderData.SetEyePos(vec4(camPos, 1.0f));
 	m_lightShaderData.SetSunDirection(-m_gui->sunDirSlider->getValue());
 	m_lightShaderData.SetSunIntensity(m_gui->sunLightSlider->getValue());
-	m_lightShaderData.SetAmbient(Ambient);
 	
 	m_shadowShaderData.SetVarianceSampler(m_bilinearSampler);
 	m_shadowShaderData.SetShadowMap(varianceMap);
