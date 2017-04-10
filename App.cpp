@@ -287,7 +287,11 @@ TextureID makeBlurPass(StateHelper* stateHelper, ShaderID shader, TextureID srcT
 
 vec3 probeLocations[] = 
 {
-    vec3{ -342, 118, 126 }, vec3{ -20, 113, 121 }
+    vec3{ -342, 118, 126 }, 
+    vec3{ -20, 113, 121 },
+    vec3{ 428, 212, 425 },
+    vec3{ -128, 212, 425 },
+    vec3{ -767, 212, 425 }
 };
 
 void setupIrradianceData(RenderStateCache* stateCache, TextureID irradianceMap, LightShaderData* lightShaderData)
@@ -311,6 +315,21 @@ void App::drawFrame()
 {
     updateGUI();
 
+    m_lightShaderData.SetSunDirection(-m_gui->sunDirSlider->getValue());
+    m_lightShaderData.SetSunIntensity(m_gui->sunLightSlider->getValue());
+
+    m_expWarpingData.SetExpPower(ExponentialWarpPower);
+
+    mat4 lightViewProj = renderDepthMapPass();
+    m_shadowQueue->SubmitAll(gfxDevice, stateHelper);
+    float shadowMapRes = ShadowMapResolution;
+    TextureID blurredVariance =
+        makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
+
+    m_shadowShaderData.SetVarianceSampler(m_bilinearSampler);
+    m_shadowShaderData.SetShadowMap(blurredVariance);
+    m_shadowShaderData.SetShadowMapProjection(lightViewProj);
+
     if (m_gui->probeButtonListener.isPressedThisFrame())
     {
         Scene scene;
@@ -320,7 +339,7 @@ void App::drawFrame()
         scene.shadowShaderData = &m_shadowShaderData;
         scene.expWarpingData = &m_expWarpingData;
 
-        m_irradianceMapArray = m_irradianceRenderer->BakeProbes(probeLocations, array_size(probeLocations), 256, scene);
+        m_irradianceMapArray = m_irradianceRenderer->BakeProbes(probeLocations, array_size(probeLocations), 256, scene, 1);
 
         m_gui->probeButtonListener.reset();
     }
@@ -328,11 +347,6 @@ void App::drawFrame()
 
     setupIrradianceData(renderStateCache, m_irradianceMapArray, &m_lightShaderData);
 
-	mat4 lightViewProj = renderDepthMapPass();
-    m_shadowQueue->SubmitAll(gfxDevice, stateHelper);
-	float shadowMapRes = ShadowMapResolution;
-	TextureID blurredVariance =
-		makeBlurPass(stateHelper, m_gausBlurCompute, m_VarianceMap, m_blurredVarianceTargets, float2(shadowMapRes, shadowMapRes));
 	renderForwardPass(lightViewProj, blurredVariance);
 
     m_forwardQueue->SubmitAll(gfxDevice, stateHelper);
@@ -376,14 +390,6 @@ void App::renderForwardPass(const mat4& lightViewProj, TextureID varianceMap)
 	m_viewShaderData.SetViewProjection(viewProj);
 	m_viewShaderData.SetViewport(vec2(static_cast<float>(width), static_cast<float>(height)));
     m_viewShaderData.SetEyePos(vec4(camPos, 1.0f));
-	m_lightShaderData.SetSunDirection(-m_gui->sunDirSlider->getValue());
-	m_lightShaderData.SetSunIntensity(m_gui->sunLightSlider->getValue());
-	
-	m_shadowShaderData.SetVarianceSampler(m_bilinearSampler);
-	m_shadowShaderData.SetShadowMap(varianceMap);
-	m_shadowShaderData.SetShadowMapProjection(lightViewProj);
-
-    m_expWarpingData.SetExpPower(ExponentialWarpPower);
 
     m_Scene.Draw(*m_forwardQueue, 0);
 }
