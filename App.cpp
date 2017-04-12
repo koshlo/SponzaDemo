@@ -35,10 +35,9 @@
  
 BaseApp *app = new App();
 
-const float ExponentialWarpPower = 5.0f;
+const float ExponentialWarpPower = 1.0f;
 const float3 SunDirection = normalize(float3(-0.4f, -1.0f, 0.3f));
-const float3 SunIntensity = float3(40.0f, 40.0f, 35.0f);
-const float3 Ambient = float3(0.2f, 0.2f, 0.3f);
+const float3 SunIntensity = float3(100.0f, 100.0f, 80.0f);
 const float Exposure = 0.05f;
 
 class ProbeButtonListener : public PushButtonListener
@@ -79,7 +78,7 @@ struct GUIElements
 
     GUIElements(int screenW, int screenH) :
         paramDialog(new Dialog(screenW - DialogW - 10, 10, DialogW, DialogH, false, true)),
-        sunLightSlider(new VectorSlider(10, 10, 400, 20, 0.0f, 100.0f, SunIntensity)),
+        sunLightSlider(new VectorSlider(10, 10, 400, 20, 50.0f, 200.0f, SunIntensity)),
         sunLightLabel(new Label(10, 30, 300, 30, "")),
         sunDirSlider(new VectorSlider(10, 70, 400, 20, -1.0f, 1.0f, SunDirection)),
         sunDirLabel(new Label(10, 90, 400, 30, "")),
@@ -200,7 +199,7 @@ bool App::load()
 	if ((m_pointClamp = gfxDevice->addSamplerState(NEAREST, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
 	if ((m_bilinearSampler = gfxDevice->addSamplerState(BILINEAR, CLAMP, CLAMP, CLAMP)) == SS_NONE) return false;
 
-    SamplerStateID materialSampler = gfxDevice->addSamplerState(BILINEAR, WRAP, WRAP, WRAP);
+    SamplerStateID materialSampler = gfxDevice->addSamplerState(TRILINEAR, WRAP, WRAP, WRAP);
     ASSERT(materialSampler != -1);
     m_lightShaderData.SetMaterialSampler(materialSampler);
 
@@ -287,8 +286,9 @@ TextureID makeBlurPass(StateHelper* stateHelper, ShaderID shader, TextureID srcT
 
 vec3 probeLocations[] = 
 {
-    vec3{ -342, 118, 126 }, 
-    vec3{ -20, 113, 121 },
+    vec3{ -342, 115, 121 }, 
+    vec3{ -20, 115, 121 },
+    vec3{ 350, 115, 121 },
     vec3{ 428, 212, 425 },
     vec3{ -128, 212, 425 },
     vec3{ -767, 212, 425 }
@@ -339,7 +339,7 @@ void App::drawFrame()
         scene.shadowShaderData = &m_shadowShaderData;
         scene.expWarpingData = &m_expWarpingData;
 
-        m_irradianceMapArray = m_irradianceRenderer->BakeProbes(probeLocations, array_size(probeLocations), 256, scene, 1);
+        m_irradianceMapArray = m_irradianceRenderer->BakeProbes(probeLocations, array_size(probeLocations), 256, scene, 3);
 
         m_gui->probeButtonListener.reset();
     }
@@ -365,7 +365,7 @@ mat4 App::renderDepthMapPass()
 
 	mat3 lightRotation = lookAtRotation(vec3(0, 0, 0), m_gui->sunDirSlider->getValue(), vec3(0, 1, 0));
 	AABB lightBB = RotateAABB(boundingBox, lightRotation);
-	const float farBias = 1000.0f; // TODO fix projection computation
+	const float farBias = 2000.0f; // TODO fix projection computation
 	mat4 lightProjection = toD3DProjection(orthoMatrixX(lightBB.GetLeft(), lightBB.GetRight(),
 		lightBB.GetTop(), lightBB.GetBottom(),
 		lightBB.GetFront(), lightBB.GetBack() + farBias));
